@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pexels API Project | This is not the real Pexels Website</title>
+    <link rel='stylesheet' href="styles.css">
+</head>
+<body>
+    <!-- NAV BAR -->
+    <nav class="nav-bar">   
+        <div class='header-container'>
+            <div class='header-left-side'>
+                <a href="index.html" class="header-home-link">
+                    <div class="header-logo-container">P</div>
+                    <p>Pexxels</p>
+                </a>
+            </div>
+            <div class='header-top-bar-right-side'>
+                <h3 class="nav-link">Explore</h3>
+                <a href="https://www.pexels.com/license/" class="nav-link"></a>
+                <a href="https://www.pexels.com/join-contributor/" class="nav-link"></a>
+                <h3 class="nav-link">...</h3>
+                <button class="join-button">
+                    <a href="https://www.pexels.com/onboarding/" class="join-link">Join</a>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="hero-background-container">
+            <img class='hero-image' src="" alt="">
+        </div>
+        <div class="search-container">
+            <h1 class="search-bar-header">A Pexels clone site. Built using Pexels API. All photos from & videos <a class="search-bar-header__pexels-link" href="https://www.pexels.com/">Pexels.com</a> </h1>
+            <form id="search-form">
+                <div class="search-bar-container">
+                    <input  class="search-bar"  type=text placeholder="Search for free photos and videos">
+                    <button  class="search-button">
+                        <img class="search-button__icon" src="images/search-icon-40.png" alt="search icon button">
+                    </button>
+                </div>
+            </form>
+            <p class="search-bar-item">Suggested:</p>
+        </div>
+        <div class='hero-photo-artist-link-container'>
+           
+        </div>
+    </section>
+    <!-- TABS SECTION -->
+    <div class="tabs-container">
+        <a id="home-link" href="#" class="tabs-container__link _home js-active-tab">Home</a>
+        <a id="discover-link" href="#" class="tabs-container__link _discover">Discover</a>
+        <a id="video-link" href="#" class="tabs-container__link _videos">Videos</a>
+        <a id="leaderboard-link" href="#" class="tabs-container__link _leaderboard">Leaderboard</a>
+        <a id="challenges-link" href="#" class="tabs-container__link _challenges">Challenges</a>
+    </div>
+    <div class="tabs-gallery-divider"></div>
+    <div class="curated-gallery-header-container">
+        <h3 class="curated-gallery-header">Free Stock Photos</h3>
+        <form action="" class="curated-gallery-header-form">
+            <!-- <label for="gallery-selection">Trending</label> -->
+            <select class="curated-gallery-header-menu" id="gallery-selection" name="">
+                <option value="trending">Trending</option>
+                <option value="new">New</option>
+            </select>
+        </form>
+    </div>
+   
+    <!-- MAIN MEDIA CONTENT -->
+    <section class="media-content-container">
+        <div id="Home" class="content-container js-active-content">
+            <div class=" curated-gallery-container">
+               <div class="curated-photo-column _one"></div>
+               <div class="curated-photo-column _two"></div>
+               <div class="curated-photo-column _three"></div>
+               <div class="curated-photo-column _four"></div>
+            </div>
+        </div>
+        
+        <div id="Discover" class="content-container">
+            <div class="featured-collections-container">
+            </div>
+        </div>
+
+        <div id="Videos" class="content-container">    
+            <div class=" curated-gallery-container">
+                <div class="popular-video-column _one"></div>
+                <div class="popular-video-column _two"></div>
+                <div class="popular-video-column _three"></div>
+                <div class="popular-video-column _four"></div>
+                </div>
+        </div>
+
+        <div id="Leaderboard" class="content-container">
+            <div class="leaderboard-container">
+                <a class="pexels-link" href="https://www.pexels.com/leaderboard/" target="_blank">Go to Pexels' Leaderboard</a>
+            </div>
+        </div>
+
+        <div id="Challenges" class="content-container">
+            <div class="challenges-container">
+                <a class="pexels-link" href="https://www.pexels.com/challenges/" target="_blank">Go to Pexels' Challengs</a>
+            </div>
+        </div>
+
+        <button class="load-more-button" >Load More</button>
+    </section>
+    <script src="script.js"></script>
+    
+</body>
+</html>
