@@ -17,11 +17,21 @@
                     <p>Pexxels</p>
                 </a>
             </div>
+            <div  class="header-search-form-container">
+                <form id="header-search-form" class="search-form" action="/search">
+                    <div class="search-bar-container _header">
+                        <input  class="search-bar"  type=text placeholder="Search for free photos and videos" required>
+                        <button  class="search-button">
+                            <img class="search-button__icon" src="images/search-icon-40.png" alt="search icon button">
+                        </button>
+                    </div>
+                </form>
+            </div>
             <div class='header-top-bar-right-side'>
-                <h3 class="nav-link">Explore</h3>
-                <a href="https://www.pexels.com/license/" class="nav-link"></a>
-                <a href="https://www.pexels.com/join-contributor/" class="nav-link"></a>
-                <h3 class="nav-link">...</h3>
+                <a href="#" class="nav-link _mediaQ-show">Explore</a>
+                <a href="https://www.pexels.com/license/" class="nav-link _mediaQ-show">License</a>
+                <a href="https://www.pexels.com/join-contributor/" class="nav-link _mediaQ-show">Upload</a>
+                <a href='#' class="nav-link">...</a>
                 <button class="join-button">
                     <a href="https://www.pexels.com/onboarding/" class="join-link">Join</a>
                 </button>
@@ -29,7 +39,7 @@
         </div>
     </nav>
     <!-- HERO SECTION -->
-    <section class="hero-section">
+    <section class="hero-section observer-container">
         <div class="hero-background-container">
             <img class='hero-image' src="" alt="">
         </div>
@@ -58,20 +68,25 @@
         <a id="challenges-link" href="#" class="tabs-container__link _challenges">Challenges</a>
     </div>
     <div class="tabs-gallery-divider"></div>
-    <div class="curated-gallery-header-container">
-        <h3 class="curated-gallery-header">Free Stock Photos</h3>
-        <form action="" class="curated-gallery-header-form">
-            <!-- <label for="gallery-selection">Trending</label> -->
-            <select class="curated-gallery-header-menu" id="gallery-selection" name="">
-                <option value="trending">Trending</option>
-                <option value="new">New</option>
-            </select>
-        </form>
-    </div>
-   
+    
+    
     <!-- MAIN MEDIA CONTENT -->
+    
+   
+    
     <section class="media-content-container">
         <div id="Home" class="content-container js-active-content">
+            <div class="curated-gallery-header-container">
+                <h3 class="curated-gallery-header">Free Stock Photos</h3>
+                <form action="" class="curated-gallery-header-form">
+                    <!-- <label for="gallery-selection">Trending</label> -->
+                    <select class="curated-gallery-header-menu" id="gallery-selection" name="">
+                        <option value="trending">Trending</option>
+                        <option value="new">New</option>
+                    </select>
+                </form>
+            </div>
+            
             <div class=" curated-gallery-container">
                <div class="curated-photo-column _one"></div>
                <div class="curated-photo-column _two"></div>
@@ -86,7 +101,7 @@
         </div>
 
         <div id="Videos" class="content-container">    
-            <div class=" curated-gallery-container">
+            <div class=" curated-gallery-container videos-container-margin">
                 <div class="popular-video-column _one"></div>
                 <div class="popular-video-column _two"></div>
                 <div class="popular-video-column _three"></div>

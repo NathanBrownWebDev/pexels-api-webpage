@@ -1,3 +1,7 @@
+const log = (arg) => {
+    console.log(arg);
+}
+
 const heroBackgroundContainer = document.querySelector('.hero-background-container');
 const heroImage = document.querySelector('.hero-image');
 const heroPhotoArtistLinkContainer = document.querySelector('.hero-photo-artist-link-container');
@@ -53,6 +57,7 @@ function getHeroBackgroundPhoto (){
             })
 }
 getHeroBackgroundPhoto();
+
 
 
 //APPEND CURATED PHOTO GALLERY
@@ -153,6 +158,23 @@ function appendCuratedGallery(){
 }
 appendCuratedGallery();
 
+const curatedGallerySelector = document.querySelector('#gallery-selection');
+
+curatedGallerySelector.addEventListener('change', () => {
+    if(curatedGallerySelector.value === 'new') {
+        pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=10&per_page=12";
+        appendCuratedGallery();
+        log(curatedGallerySelector.value + ' success');
+    }
+    if(curatedGallerySelector.value === 'trending') {
+        pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=1&per_page=12";
+        appendCuratedGallery();
+        log(curatedGallerySelector.value + ' success');
+    }
+})
+
+
+
 // window.onresize = function(){
     
 //     if (document.body.clientWidth === 766){
@@ -174,83 +196,29 @@ appendCuratedGallery();
 // }
 
 
-// const navHeader = document.querySelector('.navbar');
-// const homeHeroContainer = document.querySelector('.observer-container');
 
-// const sectionOneOptions = {
-//   rootMargin: "-15% 0px 0px 0px"
-// };
 
-// const navBarObserver = new IntersectionObserver(function(entries, sectionOneObserver){
-//   entries.forEach(entry => {
-//     console.log(entry.target);
-//     if(!entry.isIntersecting) {
-//       navHeader.classList.add('navbar-scrolled');
-//     } else {
-//       navHeader.classList.remove('navbar-scrolled');
-//     }
-//   });
-// }, sectionOneOptions);
-
-// navBarObserver.observe(homeHeroContainer);
-
-//TAB&CONTENT SELECTOR
-const loadMoreButton = document.querySelector('.load-more-button');
-
-const tabs = document.querySelectorAll('.tabs-container__link');
-let discoverTabClickCount = 0;
-let videosTabClickCount = 0;
-
-function setSectionActive(element) {
-    const contentContainers = document.querySelectorAll('.content-container');
-
-    for (let container of contentContainers) {
-        container.classList.remove('js-active-content');
-    }
-    let selectedContent = document.getElementById(element.textContent.trim());
-    selectedContent.classList.add('js-active-content');
-    
-
-    for (let tab of tabs) {
-        tab.classList.remove('js-active-tab');
-    }
-    element.classList.add('js-active-tab'); 
+//SEARCH FORM
+const headerSearchForm = document.querySelector('#header-search-form');
+const focusedInput = document.activeElement;
+log(headerSearchForm);
+log(headerSearchForm[0]);
+log(focusedInput);
+if (focusedInput === headerSearchForm) {
+    log('header search bar is focused');
 }
+focusedInput.addEventListener('click', () => {log(focusedInput === headerSearchForm)})
+// const searchForm = document.querySelectorAll('.search-form');
+// for (let form in searchForm) {
+//     log(form);
+//     log(form[0].hasFocus());
+//     // if (form[0].focused) {
 
-for (let tab of tabs) {
-    tab.addEventListener('click', function(clickedElement){
-        setSectionActive(clickedElement.currentTarget);
+//     // }
+// }
+const searchBarUserInput = document.querySelector('.search-bar').value;
 
-        if(tab.className === "tabs-container__link _home js-active-tab"){ //keeps video tab from loading collections until the tab is clicked
-            console.log('home tab clicked');
-            loadMoreButton.style.display = "block";
-        } 
-        if(tab.className === "tabs-container__link _discover js-active-tab"){ //keeps discover tab from loading collections until the tab is clicked
-            console.log('discover tab clicked');
-            if(discoverTabClickCount === 0){  //keeps discover tab from running function each time tab is clicked
-                featuredCollectionsPexelsRequest();
-                loadMoreButton.style.display = "block";
-                discoverTabClickCount++;
-            }  
-        }
-        if(tab.className === "tabs-container__link _videos js-active-tab"){ //keeps video tab from loading collections until the tab is clicked
-            console.log('video tab clicked');
-            if(videosTabClickCount === 0){  //keeps video tab from running function each time tab is clicked
-                appendPopularVideosGallery();
-                loadMoreButton.style.display = "block";
-                videosTabClickCount++;
-            }  
-        }
-        if(tab.className === "tabs-container__link _leaderboard js-active-tab"){ //keeps video tab from loading collections until the tab is clicked
-            console.log('leaderboard tab clicked');
-            loadMoreButton.style.display = "none";
-        }
-        if(tab.className === "tabs-container__link _challenges js-active-tab"){ //keeps video tab from loading collections until the tab is clicked
-            console.log('challenges tab clicked');
-            loadMoreButton.style.display = "none";
-        } 
-    })
-}
+
 
 
 
@@ -268,12 +236,14 @@ function featuredCollectionsPexelsRequest (){
             })
             .then(data => {   
                 if(data.status == 404) {
-                    //getHeroBackgroundPhoto();
+                    //
                 } else {                          
                     pexelsFeaturedURL = data.next_page;
 
                     data.collections.forEach(item => {
 
+                         //UNABLE TO FETCH SPECIFIC COLLECTIONS BY ID DUE TO 401. API KEY IS CORRECT.
+            //NOT SURE WHY, EMAILED PEXELS 3/22/22 ABOUT 401.
                         let featuredCollectionID = item.id; 
                         
 
@@ -322,8 +292,8 @@ function featuredCollectionsPexelsRequest (){
 
                     });
 
-
-                    
+            //UNABLE TO FETCH SPECIFIC COLLECTIONS BY ID DUE TO 401. API KEY IS CORRECT.
+            //NOT SURE WHY, EMAILED PEXELS 3/22/22 ABOUT 401.
                     // fetch("https://api.pexels.com/v1/collections/" + "e3uq82x" + "?per_page=1",{
                     //     headers: {
                     //         Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223'
@@ -372,11 +342,11 @@ function featuredCollectionsPexelsRequest (){
                 }
             })
 }
+
 //featuredCollectionsPexelsRequest();
 const popularVideoColumns = document.querySelectorAll('.popular-video-column');
 let popularVideoColumNumber = 0;
 let pexelsPopularVideosURL = "https://api.pexels.com/videos/popular?page=1&per_page=12";
-
 
 function appendPopularVideosGallery(){
     fetch(pexelsPopularVideosURL, {
@@ -388,8 +358,6 @@ function appendPopularVideosGallery(){
                 return response.json();
             })
             .then(data => { 
-                
-
                 pexelsPopularVideosURL = data.next_page;
                 data.videos.map(function(video){
                     console.log(video);  
@@ -410,10 +378,6 @@ function appendPopularVideosGallery(){
                     if(popularVideoColumNumber === 4) {
                         popularVideoColumNumber = 0;
                     }
-                    
-               
-                                            
-                    
 
                     //overlay elements
                     const photoOverlay = document.createElement('div');
@@ -445,11 +409,9 @@ function appendPopularVideosGallery(){
                     `);
                     //append overlay
                     artistInfoContainer.append(artistProfilePhoto, artistName);
-                    //overlayIconsContainer.append(overlayIconOne, overlayIconTwo, overlayIconThree);
                     photoOverlay.append(artistInfoContainer, overlayIconsContainer);
                     popularVideoLink.appendChild(popularVideoPlaceholderImage);
                     popularVideoPlaceholderImageContainer.append(popularVideoLink, photoOverlay);
-                    //popularVideoPlaceholderImageContainer.appendChild(popularVideoPlaceholderImage);
                     popularVideoColumns[popularVideoColumNumber].appendChild(popularVideoPlaceholderImageContainer);
                     popularVideoColumNumber++;
                 }) 
@@ -457,27 +419,107 @@ function appendPopularVideosGallery(){
 }
 
 // -------------------------------------------------------
+//TAB&CONTENT SELECTOR
+const loadMoreButton = document.querySelector('.load-more-button');
 
+const tabs = document.querySelectorAll('.tabs-container__link');
+let discoverTabClickCount = 0;
+let videosTabClickCount = 0;
+
+function setSectionActive(element) {
+    const contentContainers = document.querySelectorAll('.content-container');
+
+    for (let container of contentContainers) {
+        container.classList.remove('js-active-content');
+    }
+    let selectedContent = document.getElementById(element.textContent.trim());
+    selectedContent.classList.add('js-active-content');
+    
+
+    for (let tab of tabs) {
+        tab.classList.remove('js-active-tab');
+    }
+    element.classList.add('js-active-tab'); 
+}
+
+for (let tab of tabs) {
+    tab.addEventListener('click', function(clickedElement){
+        setSectionActive(clickedElement.currentTarget);
+
+        if(tab.className === "tabs-container__link _home js-active-tab"){ //keeps video tab from loading collections until the tab is clicked
+            console.log('home tab clicked');
+            loadMoreButton.style.display = "block";
+        } 
+        if(tab.className === "tabs-container__link _discover js-active-tab"){ //keeps discover tab from loading collections until the tab is clicked
+            console.log('discover tab clicked');
+            if(discoverTabClickCount === 0){  //keeps discover tab from running function each time tab is clicked
+                featuredCollectionsPexelsRequest();
+                loadMoreButton.style.display = "block";
+                discoverTabClickCount++;
+            }  
+        }
+        if(tab.className === "tabs-container__link _videos js-active-tab"){ //keeps video tab from loading collections until the tab is clicked
+            console.log('video tab clicked');
+            if(videosTabClickCount === 0){  //keeps video tab from running function each time tab is clicked
+                appendPopularVideosGallery();
+                loadMoreButton.style.display = "block";
+                videosTabClickCount++;
+            }  
+        }
+        if(tab.className === "tabs-container__link _leaderboard js-active-tab"){ 
+            console.log('leaderboard tab clicked');
+            loadMoreButton.style.display = "none";
+        }
+        if(tab.className === "tabs-container__link _challenges js-active-tab"){ 
+            console.log('challenges tab clicked');
+            loadMoreButton.style.display = "none";
+        } 
+    })
+}
+
+//NAV BAR CHANGES WHEN SCROLLED
+const navHeader = document.querySelector('.nav-bar');
+const homeHeroContainer = document.querySelector('.observer-container');
+const headerSearchFormContainer = document.querySelector('.header-search-form-container');
+const sectionOneOptions = {
+  rootMargin: "-350px 0px 0px 0px"
+};
+
+const navBarObserver = new IntersectionObserver(function(entries, sectionOneObserver){
+  entries.forEach(entry => {
+    if(!entry.isIntersecting) {
+      navHeader.classList.add('navbar-scrolled');
+      headerSearchFormContainer.style.opacity = '1';
+    } else {
+      navHeader.classList.remove('navbar-scrolled');
+      headerSearchFormContainer.style.opacity = '0';
+    }
+  });
+}, sectionOneOptions);
+
+navBarObserver.observe(homeHeroContainer);
+
+//LOAD MORE MEDIA BUTTON
 loadMoreButton.addEventListener('click', function(){
     for (let tab of tabs) {
         
         if(tab.className === "tabs-container__link _home js-active-tab"){
-            console.log('home button working');
+            //console.log('home button working');
             appendCuratedGallery();
         } 
         if(tab.className === "tabs-container__link _discover js-active-tab"){
-            console.log('discover button working');
+            //console.log('discover button working');
             featuredCollectionsPexelsRequest();
         }
         if(tab.className === "tabs-container__link _videos js-active-tab"){
-            console.log('video button working');
+            //console.log('video button working');
             appendPopularVideosGallery();
         }
-        if(tab.className === "tabs-container__link _leaderboard js-active-tab"){
-            console.log('leaderboard button working');
-        }
-        if(tab.className === "tabs-container__link _challenges js-active-tab"){
-            console.log('challenges button working');
-        }
+        // if(tab.className === "tabs-container__link _leaderboard js-active-tab"){
+        //     console.log('leaderboard button working');
+        // }
+        // if(tab.className === "tabs-container__link _challenges js-active-tab"){
+        //     console.log('challenges button working');
+        // }
     }           
 })
