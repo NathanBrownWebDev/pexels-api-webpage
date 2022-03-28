@@ -162,11 +162,17 @@ const curatedGallerySelector = document.querySelector('#gallery-selection');
 
 curatedGallerySelector.addEventListener('change', () => {
     if(curatedGallerySelector.value === 'new') {
+        for (let column of curatedPhotoColumns) {
+            column.replaceChildren();
+        }
         pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=10&per_page=12";
         appendCuratedGallery();
         log(curatedGallerySelector.value + ' success');
     }
     if(curatedGallerySelector.value === 'trending') {
+        for (let column of curatedPhotoColumns) {
+            column.replaceChildren();
+        }
         pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=1&per_page=12";
         appendCuratedGallery();
         log(curatedGallerySelector.value + ' success');
