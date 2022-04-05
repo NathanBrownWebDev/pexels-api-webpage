@@ -277,15 +277,28 @@ svg:hover {
     width: 90%;
     max-width: 1600px;
 }
-.curated-photo-column {
+.curated-photo-column, .modal-media-column {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     margin: 0.7em 1em 0.7em 0;
     width: 100%;
     height: 100%; /*set back to 100% */
 }
-.curated-photo-column:last-child{
+.curated-photo-column:last-child, .modal-media-column:last-child{
     margin-right: 0;
+}
+.modal-media-column._o {
+    
+}
+.modal-media-column._tw {
+    
+}
+.modal-media-column._thr {
+    
+}
+.modal-media-column._fou {
+    
 }
 .curated-photo-container {
     position: relative;
@@ -382,7 +395,7 @@ svg:hover {
         display: flex;
     }
     .popular-video-column._three {
-        display: none;
+        display: flex;
     }
    
     .artist-name {
@@ -522,5 +535,82 @@ svg:hover {
     background-color: blue;
 }
 
+/* MODAL STUFF */
+.open-modal-button {
+    margin: 2em auto;
+    display: block;
+    background-color: aqua;
+    padding: 1em 2em;
+}
+.modal-container {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, 0em) scale(0);
+    border-radius: .3em;
+    z-index: 9999;
+    background-color: #ffffff;
+    width: 1800px;
+    max-width: 90%;
+    opacity: 0;
+    transition: 300ms ease;
+    height: 90vh;
+}
+.modal-container.active {
+    transform: translate(-50%, -5em) scale(1);
+    opacity: 1;
+    overflow: hidden;
+}
+.modal-header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .75em 1.5em;
+    /* border-bottom: solid 1px green; */
+}
+.modal-header {
+    font-size: 2rem;
+    font-weight: 500;
+}
+.close-modal-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 2rem;
+}
+.modal-tabs-container {
+    display: flex;
+    margin: .5em 3em;
+}
+.modal-tab {
+ margin-right: 1em;
+ background-color: #000000;
+ color: white;
+ padding: 1em 2em;
+ border-radius: 2em;
+}
+.curated-gallery-container._modal-body {
+    box-sizing: border-box;
+    overflow-y: auto;
+    width: 96%;
+}
+.modal-overlay {
+    background-color: #00000096;
+    opacity: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none; 
+    transition: 300ms ease;
+}
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
 
 

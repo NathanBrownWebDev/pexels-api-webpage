@@ -18,9 +18,12 @@
                 </a>
             </div>
             <div  class="header-search-form-container">
-                <form id="header-search-form" class="search-form" action="/search">
+                <form 
+                    id="nav-search-form"
+                    class="search-form" 
+                    >
                     <div class="search-bar-container _header">
-                        <input  class="search-bar"  type=text placeholder="Search for free photos and videos" required>
+                        <input id="nav-search-bar" class="search-bar"  type=text placeholder="Search for free photos and videos" required>
                         <button  class="search-button">
                             <img class="search-button__icon" src="images/search-icon-40.png" alt="search icon button">
                         </button>
@@ -45,9 +48,9 @@
         </div>
         <div class="search-container">
             <h1 class="search-bar-header">A Pexels clone site. Built using Pexels API. All photos from & videos <a class="search-bar-header__pexels-link" href="https://www.pexels.com/">Pexels.com</a> </h1>
-            <form id="search-form">
+            <form id="hero-search-form" class="search-form">
                 <div class="search-bar-container">
-                    <input  class="search-bar"  type=text placeholder="Search for free photos and videos">
+                    <input id="hero-search-bar" class="search-bar"  type=text placeholder="Search for free photos and videos">
                     <button  class="search-button">
                         <img class="search-button__icon" src="images/search-icon-40.png" alt="search icon button">
                     </button>
@@ -78,7 +81,10 @@
         <div id="Home" class="content-container js-active-content">
             <div class="curated-gallery-header-container">
                 <h3 class="curated-gallery-header">Free Stock Photos</h3>
-                <form action="" class="curated-gallery-header-form">
+                <form 
+                    data-open-modal-form="#modal"
+                    action="" 
+                    class="curated-gallery-header-form">
                     <!-- <label for="gallery-selection">Trending</label> -->
                     <select class="curated-gallery-header-menu" id="gallery-selection" name="">
                         <option value="trending">Trending</option>
@@ -121,7 +127,32 @@
             </div>
         </div>
 
-        <button class="load-more-button" >Load More</button>
+        <button id="load-more-button-for-tabs" class="load-more-button" >Load More</button>
+
+
+        <!-- <button data-open-modal-button="#modal" class="open-modal-button">open modal</button> -->
+
+        <div class="modal-container" id="modal">
+            <div class="modal-header-container">
+                <div class="modal-header">____ Images</div>
+                <input data-close-modal-button class="close-modal-button" type="button" value="&times;">
+            </div>
+            <div class="modal-tabs-container">
+                <div id="searched-photos" class="modal-tab">Photo+</div>
+                <div id="searched-videos" class="modal-tab">Video+</div>
+            </div>
+            <div class="curated-gallery-container _modal-body">
+                <div class="modal-media-column _o"></div>
+                <div class="modal-media-column _tw"></div>
+                <div class="modal-media-column _thr"></div>
+                <div class="modal-media-column _fou"></div>
+            </div>
+            <button id="load-more-button-for-searches" class="load-more-button" >Load More</button>
+        </div>
+        <div class="modal-overlay">
+
+        </div>
+
     </section>
     <script src="script.js"></script>
     
