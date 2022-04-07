@@ -47,7 +47,7 @@
             <img class='hero-image' src="" alt="">
         </div>
         <div class="search-container">
-            <h1 class="search-bar-header">A Pexels clone site. Built using Pexels API. All photos from & videos <a class="search-bar-header__pexels-link" href="https://www.pexels.com/">Pexels.com</a> </h1>
+            <h1 class="search-bar-header">A Pexels clone site. Built using Pexels API. All photos & videos from <a class="search-bar-header__pexels-link" href="https://www.pexels.com/">Pexels.com</a> </h1>
             <form id="hero-search-form" class="search-form">
                 <div class="search-bar-container">
                     <input id="hero-search-bar" class="search-bar"  type=text placeholder="Search for free photos and videos">
@@ -123,18 +123,21 @@
 
         <div id="Challenges" class="content-container">
             <div class="challenges-container">
-                <a class="pexels-link" href="https://www.pexels.com/challenges/" target="_blank">Go to Pexels' Challengs</a>
+                <a class="pexels-link" href="https://www.pexels.com/challenges/" target="_blank">Go to Pexels' Challenges</a>
             </div>
         </div>
 
+        <div id="tabs-loading-animation" class="loading-animation-container">
+            <div class="loading-animation"></div>
+        </div>
         <button id="load-more-button-for-tabs" class="load-more-button" >Load More</button>
 
-
+        
         <!-- <button data-open-modal-button="#modal" class="open-modal-button">open modal</button> -->
 
         <div class="modal-container" id="modal">
             <div class="modal-header-container">
-                <div class="modal-header">____ Images</div>
+                <div class="modal-header"></div>
                 <input data-close-modal-button class="close-modal-button" type="button" value="&times;">
             </div>
             <div class="modal-tabs-container">
@@ -146,6 +149,10 @@
                 <div class="modal-media-column _tw"></div>
                 <div class="modal-media-column _thr"></div>
                 <div class="modal-media-column _fou"></div>
+            </div>
+
+            <div id="modal-loading-animation" class="loading-animation-container">
+                <div class="loading-animation"></div>
             </div>
             <button id="load-more-button-for-searches" class="load-more-button" >Load More</button>
         </div>
