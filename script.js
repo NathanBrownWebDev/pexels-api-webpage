@@ -38,28 +38,29 @@ function appendHeroArtistLink (imageData){
 function getHeroBackgroundPhoto (){
     const randomPhotoId = Math.floor((Math.random() * 11480000) + 1000);
     const photoURL = "https://api.pexels.com/v1/photos/" + randomPhotoId;
-
+    
     fetch(photoURL,{
         headers: {
             Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223'
         }
     })
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {   
-                if(data.status === 404) {
-                    getHeroBackgroundPhoto();
-                } else {
-                appendHeroBackgroundPhoto(data);
-                appendHeroArtistLink(data);
-                }
-            })
+    .then(response => {
+        return response.json();
+    })
+    .then(data => {   
+        if(data.status === 404) {
+            getHeroBackgroundPhoto();
+        } else {
+            appendHeroBackgroundPhoto(data);
+            appendHeroArtistLink(data);
+        }
+    })
 }
 getHeroBackgroundPhoto();
 
 //APPEND CURATED PHOTO GALLERY
 const curatedPhotoColumns = document.querySelectorAll('.curated-photo-column');
+const animationContainer = document.querySelector('#tabs-loading-animation');
 //let photoColumnNumber = 0;
 
 let pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=1&per_page=12";
@@ -70,15 +71,15 @@ function appendCuratedGallery(){
             Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223',
         }
     })
-            .then(response => {
-                return response.json();
-            })
+    .then(response => {
+        return response.json();
+    })
             .then(data => {   
                 if(data.status === 404) {
-                   
+                    
                 } else {
                     pexelsCuratedPhotosURL = data.next_page;
-
+                    
                     data.photos.map(function(photo){
                         
                         //photo elements/classes/properties
@@ -91,65 +92,65 @@ function appendCuratedGallery(){
                         curatedPhotoLink.title = photo.alt;
                         const curatedPhoto = document.createElement('img');
                         curatedPhoto.classList.add('curated-photo');
-                        curatedPhoto.loading = 'lazy';
+                        //curatedPhoto.loading = 'lazy';
                         
                         //how to load on columns based on screen width
                         if(document.body.clientWidth < 767) {
                             curatedPhoto.src = photo.src.medium;
                             // if(photoColumnNumber === 2) {
-                            //     photoColumnNumber = 0;
-                            // }
-                        } else if (document.body.clientWidth < 1200) {
-                            curatedPhoto.src = photo.src.large;
-                            // if(photoColumnNumber === 3) {
-                            //     photoColumnNumber = 0;
-                            // }
-                        } else {
-                            curatedPhoto.src = photo.src.large;
-                            // if(photoColumnNumber === 4) {
-                            //     photoColumnNumber = 0;
-                            // }
-                        }
-                        //append photo
-                        curatedPhotoLink.appendChild(curatedPhoto);
-                        curatedPhotoContainer.appendChild(curatedPhotoLink);
-
-                        //overlay elements
-                        const photoOverlay = document.createElement('div');
-                        photoOverlay.classList.add('photo-overlay');
-                        const artistInfoContainer = document.createElement('div');
-                        artistInfoContainer.classList.add('artist-info-container');
-                        const artistProfilePhoto = document.createElement('img');
-                        artistProfilePhoto.classList.add('artist-profile-photo');
-                        artistProfilePhoto.src = 'images/headshot-place-holder-100.png'; //no access to artist profile pic with pexels api - placeholder img used.
-                        const artistName = document.createElement('a');
-                        artistName.classList.add('artist-name')
-                        artistName.append(photo.photographer);
-                        artistName.href = photo.photographer_url;
-                        const overlayIconsContainer = document.createElement('div');
-                        overlayIconsContainer.classList.add('overlay-icons-container');
-                        overlayIconsContainer.insertAdjacentHTML('beforeend', `
-                        <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
-                            <g>
-                                <path d="M72.2,43.2L58,57.4V17c0-2.2-1.8-4-4-4s-4,1.8-4,4v40.4L35.8,43.2c-1.6-1.6-4.1-1.6-5.7,0c-1.6,1.6-1.6,4.1,0,5.7l21,21   C52,70.7,53,71,54,71s2-0.4,2.8-1.2l21-21c1.6-1.6,1.6-4.1,0-5.7C76.3,41.6,73.8,41.6,72.2,43.2z"></path>
-                                <path d="M32,87h44c2.2,0,4-1.8,4-4s-1.8-4-4-4H32c-2.2,0-4,1.8-4,4S29.8,87,32,87z"></path>
-                            </g>
-                        </svg>
-                        <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
-                        </svg>
-                        <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"></path>
-                        </svg>
-                        `);
-                        //append overlay
-                        artistInfoContainer.append(artistProfilePhoto, artistName);
-                        //overlayIconsContainer.append(overlayIconOne, overlayIconTwo, overlayIconThree);
-                        photoOverlay.append(artistInfoContainer, overlayIconsContainer);
-                        curatedPhotoContainer.appendChild(photoOverlay);
-                        //append all
-                        //let shortestColumn = 0; //array column index
-                        //let minColumnHeight = 0; 
+                                //     photoColumnNumber = 0;
+                                // }
+                            } else if (document.body.clientWidth < 1200) {
+                                curatedPhoto.src = photo.src.large;
+                                // if(photoColumnNumber === 3) {
+                                    //     photoColumnNumber = 0;
+                                    // }
+                                } else {
+                                    curatedPhoto.src = photo.src.large;
+                                    // if(photoColumnNumber === 4) {
+                                        //     photoColumnNumber = 0;
+                                        // }
+                                    }
+                                    //append photo
+                                    curatedPhotoLink.appendChild(curatedPhoto);
+                                    curatedPhotoContainer.appendChild(curatedPhotoLink);
+                                    
+                                    //overlay elements
+                                    const photoOverlay = document.createElement('div');
+                                    photoOverlay.classList.add('photo-overlay');
+                                    const artistInfoContainer = document.createElement('div');
+                                    artistInfoContainer.classList.add('artist-info-container');
+                                    const artistProfilePhoto = document.createElement('img');
+                                    artistProfilePhoto.classList.add('artist-profile-photo');
+                                    artistProfilePhoto.src = 'images/headshot-place-holder-100.png'; //no access to artist profile pic with pexels api - placeholder img used.
+                                    const artistName = document.createElement('a');
+                                    artistName.classList.add('artist-name')
+                                    artistName.append(photo.photographer);
+                                    artistName.href = photo.photographer_url;
+                                    const overlayIconsContainer = document.createElement('div');
+                                    overlayIconsContainer.classList.add('overlay-icons-container');
+                                    overlayIconsContainer.insertAdjacentHTML('beforeend', `
+                                    <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+                                    <g>
+                                    <path d="M72.2,43.2L58,57.4V17c0-2.2-1.8-4-4-4s-4,1.8-4,4v40.4L35.8,43.2c-1.6-1.6-4.1-1.6-5.7,0c-1.6,1.6-1.6,4.1,0,5.7l21,21   C52,70.7,53,71,54,71s2-0.4,2.8-1.2l21-21c1.6-1.6,1.6-4.1,0-5.7C76.3,41.6,73.8,41.6,72.2,43.2z"></path>
+                                    <path d="M32,87h44c2.2,0,4-1.8,4-4s-1.8-4-4-4H32c-2.2,0-4,1.8-4,4S29.8,87,32,87z"></path>
+                                    </g>
+                                    </svg>
+                                    <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
+                                    </svg>
+                                    <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                    <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"></path>
+                                    </svg>
+                                    `);
+                                    //append overlay
+                                    artistInfoContainer.append(artistProfilePhoto, artistName);
+                                    //overlayIconsContainer.append(overlayIconOne, overlayIconTwo, overlayIconThree);
+                                    photoOverlay.append(artistInfoContainer, overlayIconsContainer);
+                                    curatedPhotoContainer.appendChild(photoOverlay);
+                                    //append all
+                                    //let shortestColumn = 0; //array column index
+                                    //let minColumnHeight = 0; 
 
                         let columnHeightsArray = [];                        
                         for (let column of curatedPhotoColumns) {
@@ -159,7 +160,7 @@ function appendCuratedGallery(){
                         const shortestColumnPosition = columnHeightsArray.indexOf(smallestColumnHeight);
                         console.log(smallestColumnHeight + " " + shortestColumnPosition);
                         
-
+                        
                         // for (let i = 0; i < curatedPhotoColumns.length; i++) {
                         //     let columnHeight = curatedPhotoColumns[i].scrollHeight;
                         //     //console.log(`${curatedPhotoColumns[i].className} ${columnHeight}`);
@@ -170,30 +171,34 @@ function appendCuratedGallery(){
                         //     } else if(minColumnHeight === columnHeight){
                         //         return;
                         //     } else if (minColumnHeight < columnHeight){
-                        //         return;
-                        //     }
-                        // }
-                        //console.log(minColumnHeight + " " + shortestColumn);
-
-                        //Math.min(...curatedPhotoColumns.scrollHeight);
-                        curatedPhotoColumns[shortestColumnPosition].appendChild(curatedPhotoContainer);
-
-                        //curatedPhotoColumns[photoColumnNumber].appendChild(curatedPhotoContainer);
-                        //photoColumnNumber++;
-                    }) 
+                            //         return;
+                            //     }
+                            // }
+                            //console.log(minColumnHeight + " " + shortestColumn);
+                            
+                            //Math.min(...curatedPhotoColumns.scrollHeight);
+                            curatedPhotoColumns[shortestColumnPosition].appendChild(curatedPhotoContainer);
+                            
+                            //const loadListener = document.querySelector('.curated-photo-column._one');
+                            curatedPhoto.addEventListener('load', () => {
+                                animationContainer.style.display = 'none';
+                            })
+                            //curatedPhotoColumns[photoColumnNumber].appendChild(curatedPhotoContainer);
+                            //photoColumnNumber++;
+                        }) 
                 }
             })
-}
-appendCuratedGallery();
-
-const curatedGallerySelector = document.querySelector('#gallery-selection');
-
-curatedGallerySelector.addEventListener('change', () => {
-    if(curatedGallerySelector.value === 'new') {
-        for (let column of curatedPhotoColumns) {
-            column.replaceChildren();
         }
-        pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=10&per_page=12";
+        appendCuratedGallery();
+        
+        const curatedGallerySelector = document.querySelector('#gallery-selection');
+        
+        curatedGallerySelector.addEventListener('change', () => {
+            if(curatedGallerySelector.value === 'new') {
+                for (let column of curatedPhotoColumns) {
+                    column.replaceChildren();
+                }
+                pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=10&per_page=12";
         appendCuratedGallery();
         log(curatedGallerySelector.value + ' success');
     }
@@ -248,7 +253,7 @@ function featuredCollectionsPexelsRequest (){
                 } else {                          
                     pexelsFeaturedURL = data.next_page;
 
-                    data.collections.forEach(item => {
+                    data.collections.map(item => {
 
                          //UNABLE TO FETCH SPECIFIC COLLECTIONS BY ID DUE TO 401. API KEY IS CORRECT.
             //NOT SURE WHY, EMAILED PEXELS 3/22/22 ABOUT 401.
@@ -271,33 +276,37 @@ function featuredCollectionsPexelsRequest (){
                     
                         featuredCollectionsContainer.insertAdjacentHTML('beforeend', 
                         `<div class="collection-container">
-                        <div class="main-collection-image-container">
-                            <img src="images/search-icon-40.png" alt="" class="main-collection-image">
-                        </div>
-                        <div class="collection-thumbnails">
-                            <div class="thumbnail-container">
-                                <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
-                            </div>                    
-                            <div class="thumbnail-container">
-                                <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
-                            </div>                    
-                            <div class="thumbnail-container">
-                                <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
-                            </div>                    
-                            <div class="thumbnail-container">
-                                <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
-                            </div>                    
-                        </div>
-                        <div class="collection-title-and-count-container">
-                            <h3>${item.title}</h3>
-                            <div class="count-container">
-                                <p>icon</p> 
-                                <p class="count">${item.media_count}</p>
-                                        
+                            <div class="main-collection-image-container">
+                                <img src="images/search-icon-40.png" alt="" class="main-collection-image">
                             </div>
-                        </div>
-                    </div>`);
+                            <div class="collection-thumbnails">
+                                <div class="thumbnail-container">
+                                    <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
+                                </div>                    
+                                <div class="thumbnail-container">
+                                    <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
+                                </div>                    
+                                <div class="thumbnail-container">
+                                    <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
+                                </div>                    
+                                <div class="thumbnail-container">
+                                    <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
+                                </div>                    
+                            </div>
+                            <div class="collection-title-and-count-container">
+                                <h3>${item.title}</h3>
+                                <div class="count-container">
+                                    <p>icon</p> 
+                                    <p class="count">${item.media_count}</p>
+                                            
+                                </div>
+                            </div>
+                        </div>`);
 
+                        const mainCollectionImage = document.querySelector('.main-collection-image');
+                        mainCollectionImage.addEventListener('load', () => {
+                            animationContainer.style.display = 'none';
+                        })
                     });
 
             //UNABLE TO FETCH SPECIFIC COLLECTIONS BY ID DUE TO 401. API KEY IS CORRECT.
@@ -352,9 +361,12 @@ function featuredCollectionsPexelsRequest (){
         }
 
 //featuredCollectionsPexelsRequest();
+
+//APPEND VIDEO SECTION
 const popularVideoColumns = document.querySelectorAll('.popular-video-column');
 let popularVideoColumNumber = 0;
 let pexelsPopularVideosURL = "https://api.pexels.com/videos/popular?page=1&per_page=12";
+let videoCount = 0;
 
 function appendPopularVideosGallery(){
     fetch(pexelsPopularVideosURL, {
@@ -368,7 +380,7 @@ function appendPopularVideosGallery(){
             .then(data => { 
                 pexelsPopularVideosURL = data.next_page;
                 data.videos.map(function(video){
-                    console.log(video);  
+                     
                     //placeholder image elements      
                     const popularVideoPlaceholderImageContainer = document.createElement('div');
                     popularVideoPlaceholderImageContainer.classList.add('curated-photo-container');
@@ -376,13 +388,20 @@ function appendPopularVideosGallery(){
                     popularVideoLink.classList.add('curated-photo-link');
                     popularVideoLink.href = video.url;
                     //popularVideoLink.alt = (NO ALT OR TITLE GIVE BY API)
-                    const popularVideoPlaceholderImage = document.createElement('img');
+                    const popularVideoPlaceholderImage = document.createElement('video');
                     popularVideoPlaceholderImage.classList.add('curated-photo');
-                    popularVideoPlaceholderImage.loading = 'lazy';
-                    const popularVideo = document.createElement('video');
+                    popularVideoPlaceholderImage.preload = 'none';
+                    popularVideoPlaceholderImage.muted = 'muted';
+                    popularVideoPlaceholderImage.poster = video.video_pictures[1].picture;
+                    popularVideoPlaceholderImage.src = video.video_files[0].link;
+
+
+                    const cssPlayButton = document.createElement('div');
+                    cssPlayButton.classList.add('play-button');
                     
-               
-                    popularVideoPlaceholderImage.src = video.image;
+
+
+                    
                     if(popularVideoColumNumber === 4) {
                         popularVideoColumNumber = 0;
                     }
@@ -418,11 +437,29 @@ function appendPopularVideosGallery(){
                     //append overlay
                     artistInfoContainer.append(artistProfilePhoto, artistName);
                     photoOverlay.append(artistInfoContainer, overlayIconsContainer);
-                    popularVideoLink.appendChild(popularVideoPlaceholderImage);
+                    popularVideoLink.append(popularVideoPlaceholderImage, cssPlayButton);
+                    
                     popularVideoPlaceholderImageContainer.append(popularVideoLink, photoOverlay);
                     popularVideoColumns[popularVideoColumNumber].appendChild(popularVideoPlaceholderImageContainer);
                     popularVideoColumNumber++;
+                    videoCount++;
+                    console.log(videoCount);
+
+                    popularVideoPlaceholderImage.addEventListener('mouseenter', ()=>{
+                        popularVideoPlaceholderImage.play();
+                    })
+                    popularVideoPlaceholderImage.addEventListener('mouseout', ()=> {
+                        popularVideoPlaceholderImage.pause();
+                    })
+
+                    // popularVideoPlaceholderImageContainer.addEventListener('load', () => {
+                    //     animationContainer.style.display = 'none';
+                    // })
                 }) 
+                if (videoCount % 12 === 0) {
+                    console.log('is this working?')
+                    animationContainer.style.display = 'none';
+                }
             })
 }
 
@@ -433,31 +470,35 @@ function appendPopularVideosGallery(){
 //let searchedVideosURL = `https://api.pexels.com/videos/search?query=${searchValueText}&per_page=12`;
 
 const searchOverlay = document.querySelector('.modal-overlay');
+const pageBody = document.body;
+
 function openModal(modal){
     if (modal === null) return;
     modal.classList.add('active');
     searchOverlay.classList.add('active');
+    pageBody.style.overflow = 'hidden';
 }
 function closeModal(modal){
     if (modal === null) return;
     modal.classList.remove('active');
     searchOverlay.classList.remove('active');
+    pageBody.style.overflow = 'auto';
 }
 
 const searchForms = document.querySelectorAll('.search-form');
 const searchBars = document.querySelectorAll('.search-bar');
+const modalLoadingAnimation = document.querySelector('#modal-loading-animation')
+
 for (let form of searchForms) {
     form.addEventListener('submit', function(e){
         e.preventDefault();
         let searchValueText = '';
+
         for (let focus of searchBars) {
             if (focus === document.activeElement){
                 searchValueText = focus.value;
             }
         }
-        console.log(searchValueText);
-        
-        
 
         //MODAL POPUP
         const openModalFormData = document.querySelector('[data-open-modal-form]');
@@ -477,8 +518,17 @@ for (let form of searchForms) {
         })
         
         let searchedPhotosURL = `https://api.pexels.com/v1/search?query=${searchValueText}&per_page=24`;
+        const modalHeader = document.querySelector('.modal-header');
+        modalHeader.replaceChildren();
+        const modalHeaderInfo = document.createTextNode(`${searchValueText} Photos & Videos`);
+        modalHeader.appendChild(modalHeaderInfo);
+
         const modalMediaColumns = document.querySelectorAll('.modal-media-column');
+        for (let column of modalMediaColumns) {
+            column.replaceChildren();
+        }
         let modalColumnNumber = 0;
+        modalLoadingAnimation.style.display = 'flex';
 
         function appendSearchedGallery(){ //(searchURL, mediaType) - properties to use once organizing photos and videos
             fetch(searchedPhotosURL, {
@@ -522,7 +572,7 @@ for (let form of searchForms) {
                                 curatedPhotoLink.title = photo.alt;
                                 const curatedPhoto = document.createElement('img');
                                 curatedPhoto.classList.add('curated-photo');
-                                curatedPhoto.loading = 'lazy';
+                                //curatedPhoto.loading = 'lazy';
 
                                 //how to load on columns based on screen width
                                 if(document.body.clientWidth < 767) {
@@ -580,6 +630,10 @@ for (let form of searchForms) {
                                 //append all
                                 modalMediaColumns[modalColumnNumber].appendChild(curatedPhotoContainer);
                                 modalColumnNumber++;
+
+                                curatedPhoto.addEventListener('load', ()=> {
+                                    modalLoadingAnimation.style.display = 'none';
+                                })
                             }) 
                         }
                     })
@@ -587,6 +641,7 @@ for (let form of searchForms) {
         appendSearchedGallery();
         const loadMoreButtonForSearches = document.querySelector('#load-more-button-for-searches');
         loadMoreButtonForSearches.addEventListener('click', () => {
+            modalLoadingAnimation.style.display = 'flex';
             appendSearchedGallery();
             console.log('button working');
         })
@@ -637,6 +692,7 @@ for (let tab of tabs) {
         if(tab.className === "tabs-container__link _discover js-active-tab"){ //keeps discover tab from loading collections until the tab is clicked
             console.log('discover tab clicked');
             if(discoverTabClickCount === 0){  //keeps discover tab from running function each time tab is clicked
+                animationContainer.style.display = 'flex';
                 featuredCollectionsPexelsRequest();
                 loadMoreButton.style.display = "block";
                 discoverTabClickCount++;
@@ -645,6 +701,7 @@ for (let tab of tabs) {
         if(tab.className === "tabs-container__link _videos js-active-tab"){ //keeps video tab from loading collections until the tab is clicked
             console.log('video tab clicked');
             if(videosTabClickCount === 0){  //keeps video tab from running function each time tab is clicked
+                animationContainer.style.display = 'flex';
                 appendPopularVideosGallery();
                 loadMoreButton.style.display = "block";
                 videosTabClickCount++;
@@ -682,20 +739,23 @@ const navBarObserver = new IntersectionObserver(function(entries, sectionOneObse
 
 navBarObserver.observe(homeHeroContainer);
 
+//LOADING ANIMATION
+    //animationContainer.parentElement.removeChild(animationContainer);
+
 //LOAD MORE MEDIA BUTTON
 loadMoreButton.addEventListener('click', function(){
     for (let tab of tabs) {
         
         if(tab.className === "tabs-container__link _home js-active-tab"){
-           
+            animationContainer.style.display = 'flex';
             appendCuratedGallery();
         } 
         if(tab.className === "tabs-container__link _discover js-active-tab"){
-            
+            animationContainer.style.display = 'flex';
             featuredCollectionsPexelsRequest();
         }
         if(tab.className === "tabs-container__link _videos js-active-tab"){
-        
+            animationContainer.style.display = 'flex';
             appendPopularVideosGallery();
         }
        
