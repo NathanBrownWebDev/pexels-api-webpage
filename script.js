@@ -1,7 +1,3 @@
-const log = (arg) => {
-    console.log(arg);
-}
-
 const heroBackgroundContainer = document.querySelector('.hero-background-container');
 const heroImage = document.querySelector('.hero-image');
 const heroPhotoArtistLinkContainer = document.querySelector('.hero-photo-artist-link-container');
@@ -59,13 +55,106 @@ function getHeroBackgroundPhoto (){
 getHeroBackgroundPhoto();
 
 //APPEND CURATED PHOTO GALLERY
-const curatedPhotoColumns = document.querySelectorAll('.curated-photo-column');
+
 const animationContainer = document.querySelector('#tabs-loading-animation');
 //let photoColumnNumber = 0;
 
-let pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=1&per_page=12";
+function createMediaElementsAndAppend(data, columns){
+    let lastPhotoLoadCounter = 0;
+    const dataArray = data.photos;
+    dataArray.forEach(function(media){
+        
+        //photo elements/classes/properties
+        const curatedPhotoContainer = document.createElement('div');
+        curatedPhotoContainer.classList.add('curated-photo-container');
+        const curatedPhotoLink = document.createElement('a');
+        curatedPhotoLink.classList.add('curated-photo-link');
+        curatedPhotoLink.href = media.url;
+        curatedPhotoLink.alt = media.alt;
+        curatedPhotoLink.title = media.alt;
+        const curatedPhoto = document.createElement('img');
+        curatedPhoto.classList.add('curated-photo');
+        curatedPhoto.loading = 'lazy';
+       
+            
+        //how to load on columns based on screen width
+        let columnHeightsArray = [];
+        for (let column of columns) {
+            columnHeightsArray.push(column.scrollHeight);
+        } 
+        if(document.body.clientWidth < 767) {
+            curatedPhoto.src = media.src.medium;
+            columnHeightsArray.length = 2;
+        } else if (document.body.clientWidth < 1200) {
+            curatedPhoto.src = media.src.large;
+            columnHeightsArray.length = 3;
+        } else {
+            curatedPhoto.src = media.src.large;
+        }
+        //append photo
+        curatedPhotoLink.appendChild(curatedPhoto);
+        curatedPhotoContainer.appendChild(curatedPhotoLink);
+        
+        //overlay elements
+        const photoOverlay = document.createElement('div');
+        photoOverlay.classList.add('photo-overlay');
+        const artistInfoContainer = document.createElement('div');
+        artistInfoContainer.classList.add('artist-info-container');
+        const artistProfilePhoto = document.createElement('img');
+        artistProfilePhoto.classList.add('artist-profile-photo');
+        artistProfilePhoto.src = 'images/headshot-place-holder-100.png'; //no access to artist profile pic with pexels api - placeholder img used.
+        const artistName = document.createElement('a');
+        artistName.classList.add('artist-name')
+        artistName.append(media.photographer);
+        artistName.href = media.photographer_url;
+        const overlayIconsContainer = document.createElement('div');
+        overlayIconsContainer.classList.add('overlay-icons-container');
+        overlayIconsContainer.insertAdjacentHTML('beforeend', `
+            <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+            <g>
+            <path d="M72.2,43.2L58,57.4V17c0-2.2-1.8-4-4-4s-4,1.8-4,4v40.4L35.8,43.2c-1.6-1.6-4.1-1.6-5.7,0c-1.6,1.6-1.6,4.1,0,5.7l21,21   C52,70.7,53,71,54,71s2-0.4,2.8-1.2l21-21c1.6-1.6,1.6-4.1,0-5.7C76.3,41.6,73.8,41.6,72.2,43.2z"></path>
+            <path d="M32,87h44c2.2,0,4-1.8,4-4s-1.8-4-4-4H32c-2.2,0-4,1.8-4,4S29.8,87,32,87z"></path>
+            </g>
+            </svg>
+            <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
+            </svg>
+            <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"></path>
+            </svg>
+        `);
+        //append overlay
+        artistInfoContainer.append(artistProfilePhoto, artistName);
+        photoOverlay.append(artistInfoContainer, overlayIconsContainer);
+        curatedPhotoContainer.appendChild(photoOverlay);
+        //find shortest column and append photo container         
+        const shortestColumnHeight = Math.min(...columnHeightsArray);
+        const shortestColumnPosition = columnHeightsArray.indexOf(shortestColumnHeight);
+        columns[shortestColumnPosition].appendChild(curatedPhotoContainer);
+        //find/set height of image using original image size & ratio
+        const imageHeight = media.height/(media.width/curatedPhoto.offsetWidth);
+        curatedPhoto.style.height = `${imageHeight}px`;
 
-function appendCuratedGallery(){
+        lastPhotoLoadCounter++;
+        //remove loading animation once last photo is loaded
+        if(lastPhotoLoadCounter === dataArray.length) {
+            curatedPhoto.addEventListener('load', () => {
+                animationContainer.style.display = 'none';
+            })    
+        }
+    }) 
+    const curatedPhotos = document.querySelectorAll('.curated-photo');
+    for (photo of curatedPhotos) {
+        photo.removeAttribute('style');
+    }
+}
+
+
+//append curated gallery
+let pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=1&per_page=12";
+const curatedPhotoColumns = document.querySelectorAll('.curated-photo-column');
+
+function appendCuratedGallery(){                    
     fetch(pexelsCuratedPhotosURL, {
         headers: {
             Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223',
@@ -75,132 +164,21 @@ function appendCuratedGallery(){
         return response.json();
     })
             .then(data => {   
-                if(data.status === 404) {
-                    
-                } else {
                     pexelsCuratedPhotosURL = data.next_page;
-                    
-                    data.photos.map(function(photo){
-                        
-                        //photo elements/classes/properties
-                        const curatedPhotoContainer = document.createElement('div');
-                        curatedPhotoContainer.classList.add('curated-photo-container');
-                        const curatedPhotoLink = document.createElement('a');
-                        curatedPhotoLink.classList.add('curated-photo-link');
-                        curatedPhotoLink.href = photo.url;
-                        curatedPhotoLink.alt = photo.alt;
-                        curatedPhotoLink.title = photo.alt;
-                        const curatedPhoto = document.createElement('img');
-                        curatedPhoto.classList.add('curated-photo');
-                        //curatedPhoto.loading = 'lazy';
-                        
-                        //how to load on columns based on screen width
-                        if(document.body.clientWidth < 767) {
-                            curatedPhoto.src = photo.src.medium;
-                            // if(photoColumnNumber === 2) {
-                                //     photoColumnNumber = 0;
-                                // }
-                            } else if (document.body.clientWidth < 1200) {
-                                curatedPhoto.src = photo.src.large;
-                                // if(photoColumnNumber === 3) {
-                                    //     photoColumnNumber = 0;
-                                    // }
-                                } else {
-                                    curatedPhoto.src = photo.src.large;
-                                    // if(photoColumnNumber === 4) {
-                                        //     photoColumnNumber = 0;
-                                        // }
-                                    }
-                                    //append photo
-                                    curatedPhotoLink.appendChild(curatedPhoto);
-                                    curatedPhotoContainer.appendChild(curatedPhotoLink);
-                                    
-                                    //overlay elements
-                                    const photoOverlay = document.createElement('div');
-                                    photoOverlay.classList.add('photo-overlay');
-                                    const artistInfoContainer = document.createElement('div');
-                                    artistInfoContainer.classList.add('artist-info-container');
-                                    const artistProfilePhoto = document.createElement('img');
-                                    artistProfilePhoto.classList.add('artist-profile-photo');
-                                    artistProfilePhoto.src = 'images/headshot-place-holder-100.png'; //no access to artist profile pic with pexels api - placeholder img used.
-                                    const artistName = document.createElement('a');
-                                    artistName.classList.add('artist-name')
-                                    artistName.append(photo.photographer);
-                                    artistName.href = photo.photographer_url;
-                                    const overlayIconsContainer = document.createElement('div');
-                                    overlayIconsContainer.classList.add('overlay-icons-container');
-                                    overlayIconsContainer.insertAdjacentHTML('beforeend', `
-                                    <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
-                                    <g>
-                                    <path d="M72.2,43.2L58,57.4V17c0-2.2-1.8-4-4-4s-4,1.8-4,4v40.4L35.8,43.2c-1.6-1.6-4.1-1.6-5.7,0c-1.6,1.6-1.6,4.1,0,5.7l21,21   C52,70.7,53,71,54,71s2-0.4,2.8-1.2l21-21c1.6-1.6,1.6-4.1,0-5.7C76.3,41.6,73.8,41.6,72.2,43.2z"></path>
-                                    <path d="M32,87h44c2.2,0,4-1.8,4-4s-1.8-4-4-4H32c-2.2,0-4,1.8-4,4S29.8,87,32,87z"></path>
-                                    </g>
-                                    </svg>
-                                    <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                    <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
-                                    </svg>
-                                    <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                    <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"></path>
-                                    </svg>
-                                    `);
-                                    //append overlay
-                                    artistInfoContainer.append(artistProfilePhoto, artistName);
-                                    //overlayIconsContainer.append(overlayIconOne, overlayIconTwo, overlayIconThree);
-                                    photoOverlay.append(artistInfoContainer, overlayIconsContainer);
-                                    curatedPhotoContainer.appendChild(photoOverlay);
-                                    //append all
-                                    //let shortestColumn = 0; //array column index
-                                    //let minColumnHeight = 0; 
-
-                        let columnHeightsArray = [];                        
-                        for (let column of curatedPhotoColumns) {
-                            columnHeightsArray.push(column.scrollHeight);
-                        }
-                        const smallestColumnHeight = Math.min(...columnHeightsArray);
-                        const shortestColumnPosition = columnHeightsArray.indexOf(smallestColumnHeight);
-                        console.log(smallestColumnHeight + " " + shortestColumnPosition);
-                        
-                        
-                        // for (let i = 0; i < curatedPhotoColumns.length; i++) {
-                        //     let columnHeight = curatedPhotoColumns[i].scrollHeight;
-                        //     //console.log(`${curatedPhotoColumns[i].className} ${columnHeight}`);
-                        //     if (minColumnHeight > columnHeight){
-                        //         minColumnHeight = columnHeight;
-                        //         shortestColumn = i;
-                        //        // console.log(minColumnHeight + " " + shortestColumn);
-                        //     } else if(minColumnHeight === columnHeight){
-                        //         return;
-                        //     } else if (minColumnHeight < columnHeight){
-                            //         return;
-                            //     }
-                            // }
-                            //console.log(minColumnHeight + " " + shortestColumn);
-                            
-                            //Math.min(...curatedPhotoColumns.scrollHeight);
-                            curatedPhotoColumns[shortestColumnPosition].appendChild(curatedPhotoContainer);
-                            
-                            //const loadListener = document.querySelector('.curated-photo-column._one');
-                            curatedPhoto.addEventListener('load', () => {
-                                animationContainer.style.display = 'none';
-                            })
-                            //curatedPhotoColumns[photoColumnNumber].appendChild(curatedPhotoContainer);
-                            //photoColumnNumber++;
-                        }) 
-                }
+                    createMediaElementsAndAppend(data, curatedPhotoColumns);
             })
         }
+appendCuratedGallery();
+
+//curated gallery selector (new/trending toggle on home page)
+const curatedGallerySelector = document.querySelector('#gallery-selection');
+curatedGallerySelector.addEventListener('change', () => {
+    if(curatedGallerySelector.value === 'new') {
+        for (let column of curatedPhotoColumns) {
+            column.replaceChildren();
+        }
+        pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=10&per_page=12";
         appendCuratedGallery();
-        
-        const curatedGallerySelector = document.querySelector('#gallery-selection');
-        
-        curatedGallerySelector.addEventListener('change', () => {
-            if(curatedGallerySelector.value === 'new') {
-                for (let column of curatedPhotoColumns) {
-                    column.replaceChildren();
-                }
-                pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=10&per_page=12";
-        appendCuratedGallery();
-        log(curatedGallerySelector.value + ' success');
     }
     if(curatedGallerySelector.value === 'trending') {
         for (let column of curatedPhotoColumns) {
@@ -208,14 +186,10 @@ function appendCuratedGallery(){
         }
         pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=1&per_page=12";
         appendCuratedGallery();
-        log(curatedGallerySelector.value + ' success');
     }
 })
 
-
-
 // window.onresize = function(){
-    
 //     if (document.body.clientWidth === 766){
 //         curatedPhotoColumns.forEach(column => {
 //             column.replaceChildren();   
@@ -527,7 +501,7 @@ for (let form of searchForms) {
         for (let column of modalMediaColumns) {
             column.replaceChildren();
         }
-        let modalColumnNumber = 0;
+        //let modalColumnNumber = 0;
         modalLoadingAnimation.style.display = 'flex';
 
         function appendSearchedGallery(){ //(searchURL, mediaType) - properties to use once organizing photos and videos
@@ -559,82 +533,82 @@ for (let form of searchForms) {
                                 }   
                             }
                 
-                        
-                            data.photos.map(function(photo){
+                            createMediaElementsAndAppend(data, modalMediaColumns);
+                            // data.photos.map(function(photo){
                             
-                                //photo elements/classes/properties
-                                const curatedPhotoContainer = document.createElement('div');
-                                curatedPhotoContainer.classList.add('curated-photo-container');
-                                const curatedPhotoLink = document.createElement('a');
-                                curatedPhotoLink.classList.add('curated-photo-link');
-                                curatedPhotoLink.href = photo.url;
-                                curatedPhotoLink.alt = photo.alt;
-                                curatedPhotoLink.title = photo.alt;
-                                const curatedPhoto = document.createElement('img');
-                                curatedPhoto.classList.add('curated-photo');
-                                //curatedPhoto.loading = 'lazy';
+                            //     //photo elements/classes/properties
+                            //     const curatedPhotoContainer = document.createElement('div');
+                            //     curatedPhotoContainer.classList.add('curated-photo-container');
+                            //     const curatedPhotoLink = document.createElement('a');
+                            //     curatedPhotoLink.classList.add('curated-photo-link');
+                            //     curatedPhotoLink.href = photo.url;
+                            //     curatedPhotoLink.alt = photo.alt;
+                            //     curatedPhotoLink.title = photo.alt;
+                            //     const curatedPhoto = document.createElement('img');
+                            //     curatedPhoto.classList.add('curated-photo');
+                            //     //curatedPhoto.loading = 'lazy';
 
-                                //how to load on columns based on screen width
-                                if(document.body.clientWidth < 767) {
-                                    curatedPhoto.src = photo.src.medium;
-                                    if(modalColumnNumber === 2) {
-                                        modalColumnNumber = 0;
-                                    }
-                                } else if (document.body.clientWidth < 1200) {
-                                    curatedPhoto.src = photo.src.large;
-                                    if(modalColumnNumber === 3) {
-                                        modalColumnNumber = 0;
-                                    }
-                                } else {
-                                    curatedPhoto.src = photo.src.large;
-                                    if(modalColumnNumber === 4) {
-                                        modalColumnNumber = 0;
-                                        }
-                                    }
-                                //append photo
-                                curatedPhotoLink.appendChild(curatedPhoto);
-                                curatedPhotoContainer.appendChild(curatedPhotoLink);
+                            //     //how to load on columns based on screen width
+                            //     if(document.body.clientWidth < 767) {
+                            //         curatedPhoto.src = photo.src.medium;
+                            //         if(modalColumnNumber === 2) {
+                            //             modalColumnNumber = 0;
+                            //         }
+                            //     } else if (document.body.clientWidth < 1200) {
+                            //         curatedPhoto.src = photo.src.large;
+                            //         if(modalColumnNumber === 3) {
+                            //             modalColumnNumber = 0;
+                            //         }
+                            //     } else {
+                            //         curatedPhoto.src = photo.src.large;
+                            //         if(modalColumnNumber === 4) {
+                            //             modalColumnNumber = 0;
+                            //             }
+                            //         }
+                            //     //append photo
+                            //     curatedPhotoLink.appendChild(curatedPhoto);
+                            //     curatedPhotoContainer.appendChild(curatedPhotoLink);
 
-                                //overlay elements
-                                const photoOverlay = document.createElement('div');
-                                photoOverlay.classList.add('photo-overlay');
-                                const artistInfoContainer = document.createElement('div');
-                                artistInfoContainer.classList.add('artist-info-container');
-                                const artistProfilePhoto = document.createElement('img');
-                                artistProfilePhoto.classList.add('artist-profile-photo');
-                                artistProfilePhoto.src = 'images/headshot-place-holder-100.png'; //no access to artist profile pic with pexels api - placeholder img used.
-                                const artistName = document.createElement('a');
-                                artistName.classList.add('artist-name')
-                                artistName.append(photo.photographer);
-                                artistName.href = photo.photographer_url;
-                                const overlayIconsContainer = document.createElement('div');
-                                overlayIconsContainer.classList.add('overlay-icons-container');
-                                overlayIconsContainer.insertAdjacentHTML('beforeend', `
-                                <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
-                                    <g>
-                                        <path d="M72.2,43.2L58,57.4V17c0-2.2-1.8-4-4-4s-4,1.8-4,4v40.4L35.8,43.2c-1.6-1.6-4.1-1.6-5.7,0c-1.6,1.6-1.6,4.1,0,5.7l21,21   C52,70.7,53,71,54,71s2-0.4,2.8-1.2l21-21c1.6-1.6,1.6-4.1,0-5.7C76.3,41.6,73.8,41.6,72.2,43.2z"></path>
-                                        <path d="M32,87h44c2.2,0,4-1.8,4-4s-1.8-4-4-4H32c-2.2,0-4,1.8-4,4S29.8,87,32,87z"></path>
-                                    </g>
-                                </svg>
-                                <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                    <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
-                                </svg>
-                                <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                    <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"></path>
-                                </svg>
-                                `);
-                                //append overlay
-                                artistInfoContainer.append(artistProfilePhoto, artistName);
-                                photoOverlay.append(artistInfoContainer, overlayIconsContainer);
-                                curatedPhotoContainer.appendChild(photoOverlay);
-                                //append all
-                                modalMediaColumns[modalColumnNumber].appendChild(curatedPhotoContainer);
-                                modalColumnNumber++;
+                            //     //overlay elements
+                            //     const photoOverlay = document.createElement('div');
+                            //     photoOverlay.classList.add('photo-overlay');
+                            //     const artistInfoContainer = document.createElement('div');
+                            //     artistInfoContainer.classList.add('artist-info-container');
+                            //     const artistProfilePhoto = document.createElement('img');
+                            //     artistProfilePhoto.classList.add('artist-profile-photo');
+                            //     artistProfilePhoto.src = 'images/headshot-place-holder-100.png'; //no access to artist profile pic with pexels api - placeholder img used.
+                            //     const artistName = document.createElement('a');
+                            //     artistName.classList.add('artist-name')
+                            //     artistName.append(photo.photographer);
+                            //     artistName.href = photo.photographer_url;
+                            //     const overlayIconsContainer = document.createElement('div');
+                            //     overlayIconsContainer.classList.add('overlay-icons-container');
+                            //     overlayIconsContainer.insertAdjacentHTML('beforeend', `
+                            //     <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
+                            //         <g>
+                            //             <path d="M72.2,43.2L58,57.4V17c0-2.2-1.8-4-4-4s-4,1.8-4,4v40.4L35.8,43.2c-1.6-1.6-4.1-1.6-5.7,0c-1.6,1.6-1.6,4.1,0,5.7l21,21   C52,70.7,53,71,54,71s2-0.4,2.8-1.2l21-21c1.6-1.6,1.6-4.1,0-5.7C76.3,41.6,73.8,41.6,72.2,43.2z"></path>
+                            //             <path d="M32,87h44c2.2,0,4-1.8,4-4s-1.8-4-4-4H32c-2.2,0-4,1.8-4,4S29.8,87,32,87z"></path>
+                            //         </g>
+                            //     </svg>
+                            //     <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            //         <path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"></path>
+                            //     </svg>
+                            //     <svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            //         <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"></path>
+                            //     </svg>
+                            //     `);
+                            //     //append overlay
+                            //     artistInfoContainer.append(artistProfilePhoto, artistName);
+                            //     photoOverlay.append(artistInfoContainer, overlayIconsContainer);
+                            //     curatedPhotoContainer.appendChild(photoOverlay);
+                            //     //append all
+                            //     modalMediaColumns[modalColumnNumber].appendChild(curatedPhotoContainer);
+                            //     modalColumnNumber++;
 
-                                curatedPhoto.addEventListener('load', ()=> {
-                                    modalLoadingAnimation.style.display = 'none';
-                                })
-                            }) 
+                            //     curatedPhoto.addEventListener('load', ()=> {
+                            //         modalLoadingAnimation.style.display = 'none';
+                            //     })
+                            // }) 
                         }
                     })
         }
