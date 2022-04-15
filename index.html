@@ -48,7 +48,9 @@
         </div>
         <div class="search-container">
             <h1 class="search-bar-header">A Pexels clone site. Built using Pexels API. All photos & videos from <a class="search-bar-header__pexels-link" href="https://www.pexels.com/">Pexels.com</a> </h1>
-            <form id="hero-search-form" class="search-form">
+            <form 
+                id="hero-search-form" 
+                class="search-form" >
                 <div class="search-bar-container">
                     <input id="hero-search-bar" class="search-bar"  type=text placeholder="Search for free photos and videos">
                     <button  class="search-button">
@@ -84,7 +86,8 @@
                 <form 
                     data-open-modal-form="#modal"
                     action="" 
-                    class="curated-gallery-header-form">
+                    class="curated-gallery-header-form"
+                    autocomplete="off">
                     <!-- <label for="gallery-selection">Trending</label> -->
                     <select class="curated-gallery-header-menu" id="gallery-selection" name="">
                         <option value="trending">Trending</option>
@@ -141,14 +144,28 @@
                 <input data-close-modal-button class="close-modal-button" type="button" value="&times;">
             </div>
             <div class="modal-tabs-container">
-                <div id="searched-photos" class="modal-tab">Photo+</div>
-                <div id="searched-videos" class="modal-tab">Video+</div>
+                <div id="searched-photos" class="modal-tab active">Photos
+                    <span id="searched-photos__number">
+                    </span>
+                </div>
+                <div id="searched-videos" class="modal-tab">Videos 
+                    <span id="searched-videos__number">
+                    </span>
+                </div>
             </div>
-            <div class="curated-gallery-container _modal-body">
-                <div class="modal-media-column _o"></div>
-                <div class="modal-media-column _tw"></div>
-                <div class="modal-media-column _thr"></div>
-                <div class="modal-media-column _fou"></div>
+            <div class="modal-body">
+                <div id="modal-photos-container" class="curated-gallery-container _modal-gallery active">
+                    <div class="modal-photos-column _one"></div>
+                    <div class="modal-photos-column _two"></div>
+                    <div class="modal-photos-column _three"></div>
+                    <div class="modal-photos-column _four"></div>
+                </div>
+                <div id="modal-videos-container" class="curated-gallery-container _modal-gallery">
+                    <div class="modal-videos-column _one"></div>
+                    <div class="modal-videos-column _two"></div>
+                    <div class="modal-videos-column _three"></div>
+                    <div class="modal-videos-column _four"></div>
+                </div>
             </div>
 
             <div id="modal-loading-animation" class="loading-animation-container">
@@ -158,6 +175,10 @@
         </div>
         <div class="modal-overlay">
 
+        </div>
+
+        <div class="developer">Developed by 
+            <a class="developer-link" href="https://nathanbrownweb.com/">NathanBrownWeb.com</a>
         </div>
 
     </section>
