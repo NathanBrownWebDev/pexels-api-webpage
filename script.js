@@ -68,7 +68,6 @@ function createMediaElementsAndAppend(data, columns, mediaType, tabOrModal){
         let mediaContainer = document.createElement('div');;
         let mediaLink = document.createElement('a');;
         let mediaContent;
-        //let cssPlayButton;
         
         mediaLink.href = media.url;
         if(mediaType === 'videoMedia') { 
@@ -193,7 +192,9 @@ function createMediaElementsAndAppend(data, columns, mediaType, tabOrModal){
     }) 
     const curatedPhotos = document.querySelectorAll('.curated-photo');
     for (photo of curatedPhotos) {
-        photo.removeAttribute('style');
+        if(photo.hasAttribute('style')){
+            photo.removeAttribute('style');
+        }
     }
 }
 
@@ -411,51 +412,131 @@ function appendPopularVideosGallery(){
 //APPEND SEARCH GALLERY
 const searchOverlay = document.querySelector('.modal-overlay');
 const pageBody = document.body;
+const searchForms = document.querySelectorAll('.search-form');
+const searchBars = document.querySelectorAll('.search-bar');
+const searchedPhotosTab = document.querySelector('#searched-photos');
+const modalPhotosContainer = document.querySelector('#modal-photos-container');
+const searchedVideosTab = document.querySelector('#searched-videos');
+const modalVideosContainer = document.querySelector('#modal-videos-container');
+const modalPhotoColumns = document.querySelectorAll('.modal-photos-column');
+const modalVideoColumns = document.querySelectorAll('.modal-videos-column');
 
+//append searched photos function
+let searchedPhotosURL;
+function appendSearchedPhotoGallery(searchedURL){
+    fetch(searchedURL, {
+        headers: {
+            Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223',
+        }
+    })
+    .then(response => {
+        return response.json();
+    })
+    .then(data => {   
+        if(data.status === 404) {
+            
+        } else {
+            searchedPhotosURL = data.next_page;
+            const mediaType = 'photoMedia';
+            const tabOrModal = 'modal';
+            const searchedPhotoTabNumber = document.querySelector('#searched-photos__number');
+            const photoTotalSearchResults = document.createTextNode(data.total_results);
+            searchedPhotoTabNumber.replaceChildren();
+            searchedPhotoTabNumber.appendChild(photoTotalSearchResults);
+            searchedPhotosTab.addEventListener('click', ()=> {
+                searchedVideosTab.classList.remove('active');
+                searchedPhotosTab.classList.add('active');
+                modalVideosContainer.classList.remove('active');
+                        modalPhotosContainer.classList.add('active');
+            })
+            createMediaElementsAndAppend(data, modalPhotoColumns, mediaType, tabOrModal);              
+        }
+    })
+}
+
+//append searched videos function
+let searchedVideosURL;
+let searchedVideoTabClickCounter;
+function appendSearchedVideoGallery(searchedURL){ //(searchURL, mediaType) - properties to use once organizing photos and videos
+    fetch(searchedURL, {
+        headers: {
+            Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223',
+        }
+    })
+        .then(response => {
+                return response.json();
+        })
+        .then(data => {   
+            console.log(data);
+            searchedVideosURL = data.next_page;
+            const mediaType = 'videoMedia';
+            const tabOrModal = 'modal';
+            const searchedVideoTabNumber = document.querySelector('#searched-videos__number');
+            const videoTotalSearchResults = document.createTextNode(data.total_results);
+            if(searchedVideoTabClickCounter === 0){
+                searchedVideoTabNumber.replaceChildren();
+                searchedVideoTabNumber.appendChild(videoTotalSearchResults);
+            }
+            if(searchedVideoTabClickCounter > 0) {
+                createMediaElementsAndAppend(data, modalVideoColumns, mediaType, tabOrModal);              
+            }
+        })
+    }
+//video tab listener
+searchedVideosTab.addEventListener('click', ()=> {
+    searchedPhotosTab.classList.remove('active');
+    searchedVideosTab.classList.add('active');
+    modalPhotosContainer.classList.remove('active');
+    modalVideosContainer.classList.add('active');
+    if(searchedVideoTabClickCounter < 1){
+        //console.log(data);
+        //createMediaElementsAndAppend(data, modalVideoColumns, mediaType, tabOrModal);              
+        appendSearchedVideoGallery(searchedVideosURL);
+    }
+    searchedVideoTabClickCounter++;
+    console.log(searchedVideoTabClickCounter);
+})
+
+//modal open/close functions
 function openModal(modal){
     if (modal === null) return;
     modal.classList.add('active');
     searchOverlay.classList.add('active');
     pageBody.style.overflow = 'hidden';
-    document.activeElement.blur();
+    document.activeElement.blur(); //to hide mobile keyboards after submitting a search
 }
 function closeModal(modal){
     if (modal === null) return;
     modal.classList.remove('active');
     searchOverlay.classList.remove('active');
     pageBody.style.overflow = 'auto';
+    for (let column of modalPhotoColumns) {
+        column.replaceChildren();
+    }
+    for (let column of modalVideoColumns) {
+        column.replaceChildren();
+    }
 }
-
-const searchForms = document.querySelectorAll('.search-form');
-const searchBars = document.querySelectorAll('.search-bar');
-//modal selectors to be used when modal tabs clicked
-const searchedPhotosTab = document.querySelector('#searched-photos');
-const modalPhotosContainer = document.querySelector('#modal-photos-container');
-const searchedVideosTab = document.querySelector('#searched-videos');
-const modalVideosContainer = document.querySelector('#modal-videos-container');
-
+//form submission on search bars
 for (let form of searchForms) {
-    
     form.addEventListener('submit', function(e){
         e.preventDefault();
         let searchValueText = '';
-
+        
         for (let focus of searchBars) {
             if (focus === document.activeElement){
                 searchValueText = focus.value;
             }
         }
-
         //MODAL POPUP
         const openModalFormData = document.querySelector('[data-open-modal-form]');
         const closeModalButton = document.querySelector('[data-close-modal-button]');       
         
         const searchModal = document.querySelector(openModalFormData.dataset.openModalForm);
         openModal(searchModal);
-        
+
         closeModalButton.addEventListener('click', () => {
             const modal = closeModalButton.closest('.modal-container');
-            console.log(modal);
             closeModal(modal);
         })
         searchOverlay.addEventListener('click', () => {
@@ -468,7 +549,7 @@ for (let form of searchForms) {
         const modalHeaderInfo = document.createTextNode(`${searchValueText} Photos & Videos`);
         modalHeader.appendChild(modalHeaderInfo);
         modalLoadingAnimation.style.display = 'flex';
-
+        
         //set modal photo container active if a second+ search is made.
         if(modalVideosContainer.classList.contains('active')){
             searchedVideosTab.classList.remove('active');
@@ -477,99 +558,25 @@ for (let form of searchForms) {
             modalPhotosContainer.classList.add('active');
         }
         //append modal photo gallery 
-        const modalPhotoColumns = document.querySelectorAll('.modal-photos-column');
-        for (let column of modalPhotoColumns) {
-            column.replaceChildren();
-        }
-        let searchedPhotosURL = `https://api.pexels.com/v1/search?query=${searchValueText}&per_page=2`;
-        function appendSearchedPhotoGallery(){
-            fetch(searchedPhotosURL, {
-                headers: {
-                    Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223',
-                }
-            })
-                .then(response => {
-                        return response.json();
-                    })
-                    .then(data => {   
-                        if(data.status === 404) {
-            
-                        } else {
-                            searchedPhotosURL = data.next_page;
-                            const mediaType = 'photoMedia';
-                            const tabOrModal = 'modal';
-                            const searchedPhotoTabNumber = document.querySelector('#searched-photos__number');
-                            const photoTotalSearchResults = document.createTextNode(data.total_results);
-                            searchedPhotosTab.addEventListener('click', ()=> {
-                                searchedVideosTab.classList.remove('active');
-                                searchedPhotosTab.classList.add('active');
-                                modalVideosContainer.classList.remove('active');
-                                modalPhotosContainer.classList.add('active');
-                            })
-                            searchedPhotoTabNumber.replaceChildren();
-                            searchedPhotoTabNumber.appendChild(photoTotalSearchResults);
-                            createMediaElementsAndAppend(data, modalPhotoColumns, mediaType, tabOrModal);              
-                        }
-                    })
-        }
-        appendSearchedPhotoGallery();
-
-        const modalVideoColumns = document.querySelectorAll('.modal-videos-column');
-        for (let column of modalVideoColumns) {
-            column.replaceChildren();
-        }
-        let searchedVideosURL = `https://api.pexels.com/videos/search?query=${searchValueText}&per_page=24`;
-        let searchedVideoTabClickCounter = 0;
-        function appendSearchedVideoGallery(){ //(searchURL, mediaType) - properties to use once organizing photos and videos
-            fetch(searchedVideosURL, {
-                headers: {
-                    Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223',
-                }
-            })
-                .then(response => {
-                        return response.json();
-                    })
-                    .then(data => {   
-                            searchedVideosURL = data.next_page;
-                            const mediaType = 'videoMedia';
-                            const tabOrModal = 'modal';
-                            const searchedVideoTabNumber = document.querySelector('#searched-videos__number');
-                            const videoTotalSearchResults = document.createTextNode(data.total_results);
-                            searchedVideosTab.addEventListener('click', ()=> {
-                                searchedPhotosTab.classList.remove('active');
-                                searchedVideosTab.classList.add('active');
-                                modalPhotosContainer.classList.remove('active');
-                                modalVideosContainer.classList.add('active');
-                                if(searchedVideoTabClickCounter < 1){
-                                    createMediaElementsAndAppend(data, modalVideoColumns, mediaType, tabOrModal);              
-                                }
-                                searchedVideoTabClickCounter++;
-                                console.log(searchedVideoTabClickCounter);
-                            })
-                            console.log(searchedVideoTabClickCounter);
-                            if(searchedVideoTabClickCounter > 0) {
-                                createMediaElementsAndAppend(data, modalVideoColumns, mediaType, tabOrModal);              
-                            }
-                            searchedVideoTabNumber.replaceChildren();
-                            searchedVideoTabNumber.appendChild(videoTotalSearchResults);
-                    })
-        }
-        appendSearchedVideoGallery();
-        //modal load more button & listener
-        const loadMoreButtonForSearches = document.querySelector('#load-more-button-for-searches');
-        loadMoreButtonForSearches.addEventListener('click', () => {
-            modalLoadingAnimation.style.display = 'flex';
-            if(modalPhotosContainer.classList.contains('active')) {
-                appendSearchedPhotoGallery();
-                console.log('photo button working');
-            } else {
-                appendSearchedVideoGallery();
-                console.log('video button working');
-            }
-        })
+        searchedPhotosURL = `https://api.pexels.com/v1/search?query=${searchValueText}&per_page=24`;
+        appendSearchedPhotoGallery(searchedPhotosURL);
+        
+        //append modal video gallery
+        searchedVideoTabClickCounter = 0;
+        searchedVideosURL = `https://api.pexels.com/videos/search?query=${searchValueText}&per_page=24`;
+        appendSearchedVideoGallery(searchedVideosURL);
     })
-    form.reset();
 }
+//modal load more button & listener
+const loadMoreButtonForSearches = document.querySelector('#load-more-button-for-searches');
+loadMoreButtonForSearches.addEventListener('click', () => {
+    modalLoadingAnimation.style.display = 'flex';
+    if(modalPhotosContainer.classList.contains('active')) {
+        appendSearchedPhotoGallery(searchedPhotosURL);
+    } else {
+        appendSearchedVideoGallery(searchedVideosURL);
+    }
+})
 
 //TAB&CONTENT SELECTOR
 const loadMoreButton = document.querySelector('#load-more-button-for-tabs');
@@ -646,6 +653,26 @@ const navBarObserver = new IntersectionObserver(function(entries, sectionOneObse
 }, sectionOneOptions);
 
 navBarObserver.observe(homeHeroContainer);
+
+//when mobile menu checked, show top nav bar
+const navCheckbox = document.querySelector('.nav-checkbox');
+const navCheckboxLabel = document.querySelector('.nav-label');
+navCheckboxLabel.addEventListener('click', ()=> {
+    if(!navCheckbox.checked && !navHeader.classList.contains('navbar-scrolled')) {
+        navHeader.classList.add('navbar-scrolled');
+        headerSearchFormContainer.style.opacity = '1';
+        pageBody.style.overflow = 'hidden';
+        console.log('checkbox checked');
+    } else if(!navCheckbox.checked){
+        pageBody.style.overflow = 'hidden';
+    } else if(navCheckbox.checked && navHeader.classList.contains('navbar-scrolled') && window.pageYOffset < 50){
+        navHeader.classList.remove('navbar-scrolled');
+        headerSearchFormContainer.style.opacity = '0';
+        pageBody.style.overflow = 'auto';
+    } else if(navCheckbox.checked){
+        pageBody.style.overflow = 'auto';
+    }
+})
 
 //LOAD MORE MEDIA BUTTON CALLS DEPENDING ON TAB SELECTED FOR MAIN SECTION
 loadMoreButton.addEventListener('click', function(){
