@@ -9,18 +9,18 @@
 </head>
 <body>
     <!-- NAV BAR -->
-    <nav class="nav-bar">   
+    <header class="nav-bar">   
         <div class='header-container'>
             <div class='header-left-side'>
                 <a href="index.html" class="header-home-link">
                     <div class="header-logo-container">P</div>
-                    <p>Pexxels</p>
+                    <p class="header-pexels-name">Pexxels</p>
                 </a>
             </div>
             <div  class="header-search-form-container">
-                <form 
+                <form
                     id="nav-search-form"
-                    class="search-form" 
+                    class="search-form"
                     >
                     <div class="search-bar-container _header">
                         <input id="nav-search-bar" class="search-bar"  type=text placeholder="Search for free photos and videos" required>
@@ -30,17 +30,46 @@
                     </div>
                 </form>
             </div>
-            <div class='header-top-bar-right-side'>
-                <a href="#" class="nav-link _mediaQ-show">Explore</a>
+            <input class="nav-checkbox" type="checkbox" name="" id="nav-menu-checkbox">
+            <nav class="nav-menu">
+                <div class="nav-menu-header">
+                    <p>This is a pexels clone site</p>
+                    <p>All photos & Videos from
+                        <a href="https://www.pexels.com/">Pexels.com</a>
+                    </p>
+                </div>
+                <a href="#" class="nav-link _bold">Home</a>
+                <hr>
+                <a href="#" class="nav-link _bold">Discover Photos</a>
+                <a href="https://www.pexels.com/popular-searches/" class="nav-link _bold">Popular Searches</a>
+                <a href="#" class="nav-link _bold">Free Videos</a>
+                <a href="#" class="nav-link _bold">Challenges</a>
+                <a href="#" class="nav-link _bold">Leaderboard</a>
+                <a href="#" class="nav-link _bold">Pexels Blog</a>
+                <hr>
+                <a href="#" class="nav-link">Login</a>
+                <a href="#" class="nav-link">Join</a>
+                <a href="#" class="nav-link">Change Language</a>
                 <a href="https://www.pexels.com/license/" class="nav-link _mediaQ-show">License</a>
-                <a href="https://www.pexels.com/join-contributor/" class="nav-link _mediaQ-show">Upload</a>
-                <a href='#' class="nav-link">...</a>
-                <button class="join-button">
-                    <a href="https://www.pexels.com/onboarding/" class="join-link">Join</a>
-                </button>
+                <hr>
+                <a href="#" class="nav-link">Apps And Ps Plugin</a>
+                <a href="#" class="nav-link">FAQ</a>
+                <a href="#" class="nav-link">About Us</a>
+                <a href="#" class="nav-link">Imprint & Terms</a>
+                    
+            </nav>
+            <label class="nav-label" for="nav-menu-checkbox"><span class="nav-menu-hamburger"></span></label>
+            
+            <div class="desktop-sub-nav">
+                <a href="#" class="nav-link _mediaQ-show">Explore</a>
+                    <a href="https://www.pexels.com/join-contributor/" class="nav-link _mediaQ-show">Upload</a>
+                    <a href='#' class="nav-link">...</a>
+                    <button class="join-button">
+                        <a href="https://www.pexels.com/onboarding/" class="join-link">Join</a>
+                    </button>
             </div>
         </div>
-    </nav>
+    </header>
     <!-- HERO SECTION -->
     <section class="hero-section observer-container">
         <div class="hero-background-container">

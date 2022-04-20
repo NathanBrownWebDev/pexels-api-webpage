@@ -48,6 +48,12 @@ img {
    width: 100%;
    box-sizing: border-box; 
 }
+hr {
+    border:none;
+    margin: 1rem;
+    height: 1px;
+    background-color: #adadad6e;
+}
 svg {
  fill: #cecece;
 }
@@ -61,13 +67,66 @@ svg:hover {
     z-index: 9999;
     background-color: transparent;
     width: 100%;
-
+    height: 4.5rem;
     color: white;
 }
-
+.header-pexels-name{
+    display: none;
+}
+.nav-checkbox{
+    display: none;
+}
+.nav-label {
+    width: 2em;
+    height: 1.8em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.nav-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 4.45rem;
+    left: 0;
+    width: 100%;
+    background-color: #1a2029;
+    padding: 1.5rem 0;
+    overflow-y: auto;
+    height: 100vh;
+}
+.nav-menu-hamburger {
+    position: relative;
+    width: 1.3em;
+    height: .15em;
+    background-color: #f1f1f1;
+}
+.nav-menu-hamburger::before, 
+.nav-menu-hamburger::after{
+    content: '';
+    background-color: #f1f1f1;
+    position: absolute;
+    top: -0.35em;
+    width: 100%;
+    height: 100%;
+}
+.nav-menu-hamburger::after {
+    top: 0.35em;
+}
+.nav-checkbox:checked ~ .nav-menu {
+    display: flex;
+}
+.nav-menu-header{
+    text-align: center;
+    margin-bottom: 1rem;
+}
+.desktop-sub-nav {
+    display: none;
+}
 .header-container {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 15px;
 }
 .header-left-side, .header-top-bar-right-side {
@@ -82,7 +141,7 @@ svg:hover {
     flex-wrap: nowrap;
     justify-content: space-between;
     align-items: center;
-    width: 6.5em;
+    /* width: 6.5em; */
     color: white;
 }
 .header-logo-container {
@@ -90,10 +149,12 @@ svg:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 2.5em;
-    height: 2.5em;
+    width: 2.2em;
+    height: 2.2em;
     background-color:  rgb(42, 163, 133);
     border-radius: .5em;
+    font-size: 1.2rem;
+    font-weight: 800;
 }
 .header-search-form-container {
     width: 100%;
@@ -102,14 +163,20 @@ svg:hover {
 }
 .search-bar-container._header{
     margin-bottom: 0;
+    height: 2.5rem;
+    width: 100%;
 }
 .nav-link {
-    padding-right: .75em;
-    color: white;
+    /* padding-right: .75em; */
+    font-size: 1.2rem;
+    color: #dadadabe;
+    margin: .3rem 1rem;
 }
-.nav-link._mediaQ-show {
-    display: none;
+.nav-link._bold {
+    font-weight: 600;
+    color: #dadadacc;
 }
+
 .join-button {
     padding: 10px 28px;
     background-color: rgb(42, 163, 133);
@@ -414,9 +481,7 @@ svg:hover {
     }
 }
 @media only screen and (min-width: 1000px) {
-    .nav-link._mediaQ-show{
-        display: inline;
-    }
+    
 }
 @media only screen and (min-width: 1200px) {
     .curated-photo-column._four, 
