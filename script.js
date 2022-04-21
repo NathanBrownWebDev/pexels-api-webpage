@@ -467,7 +467,6 @@ function appendSearchedVideoGallery(searchedURL){ //(searchURL, mediaType) - pro
                 return response.json();
         })
         .then(data => {   
-            console.log(data);
             searchedVideosURL = data.next_page;
             const mediaType = 'videoMedia';
             const tabOrModal = 'modal';
@@ -489,12 +488,9 @@ searchedVideosTab.addEventListener('click', ()=> {
     modalPhotosContainer.classList.remove('active');
     modalVideosContainer.classList.add('active');
     if(searchedVideoTabClickCounter < 1){
-        //console.log(data);
-        //createMediaElementsAndAppend(data, modalVideoColumns, mediaType, tabOrModal);              
         appendSearchedVideoGallery(searchedVideosURL);
     }
     searchedVideoTabClickCounter++;
-    console.log(searchedVideoTabClickCounter);
 })
 
 //modal open/close functions
@@ -581,6 +577,7 @@ loadMoreButtonForSearches.addEventListener('click', () => {
 //TAB&CONTENT SELECTOR
 const loadMoreButton = document.querySelector('#load-more-button-for-tabs');
 const tabs = document.querySelectorAll('.tabs-container__link');
+const tabLinks = document.querySelectorAll('.tabs-link');
 let discoverTabClickCount = 0;
 let videosTabClickCount = 0;
 
@@ -605,11 +602,9 @@ for (let tab of tabs) {
         setSectionActive(clickedElement.currentTarget);
 
         if(tab.className === "tabs-container__link _home js-active-tab"){ //keeps video tab from loading collections until the tab is clicked
-            console.log('home tab clicked');
             loadMoreButton.style.display = "block";
         } 
         if(tab.className === "tabs-container__link _discover js-active-tab"){ //keeps discover tab from loading collections until the tab is clicked
-            console.log('discover tab clicked');
             if(discoverTabClickCount === 0){  //keeps discover tab from running function each time tab is clicked
                 animationContainer.style.display = 'flex';
                 featuredCollectionsPexelsRequest();
@@ -618,7 +613,6 @@ for (let tab of tabs) {
             }  
         }
         if(tab.className === "tabs-container__link _videos js-active-tab"){ //keeps video tab from loading collections until the tab is clicked
-            console.log('video tab clicked');
             if(videosTabClickCount === 0){  //keeps video tab from running function each time tab is clicked
                 animationContainer.style.display = 'flex';
                 appendPopularVideosGallery();
@@ -627,6 +621,48 @@ for (let tab of tabs) {
             }  
         }
         if(tab.className === "tabs-container__link _leaderboard js-active-tab" || tab.className === "tabs-container__link _challenges js-active-tab"){   
+            loadMoreButton.style.display = "none";
+        }
+    })
+}
+//switch tab on nav menu link click and close nav mobile menu
+for (let link of tabLinks){
+    link.addEventListener('click', (clickedLink)=> {
+        navCheckbox.checked = false;
+        //(clickedLink.currentTarget.id === 'trending-new-photos-link') ? console.log(clickedLink.currentTarget.id) : console.log('nope');
+        if(clickedLink.currentTarget.id === 'trending-new-photos-link') {
+            const homeTab = document.querySelector('#home-link');
+            setSectionActive(homeTab);
+            loadMoreButton.style.display = "block";
+        }
+        if(clickedLink.currentTarget.id === 'discover-tab-link') {
+            const discoverTab = document.querySelector('#discover-link');
+            setSectionActive(discoverTab);
+            if(discoverTabClickCount === 0){  //keeps discover tab from running function each time tab is clicked
+                animationContainer.style.display = 'flex';
+                featuredCollectionsPexelsRequest();
+                loadMoreButton.style.display = "block";
+                discoverTabClickCount++;
+            }  
+        }
+        if(clickedLink.currentTarget.id === 'video-tab-link') {
+            const videoTab = document.querySelector('#video-link');
+            setSectionActive(videoTab);
+            if(videosTabClickCount === 0){  //keeps video tab from running function each time tab is clicked
+                animationContainer.style.display = 'flex';
+                appendPopularVideosGallery();
+                loadMoreButton.style.display = "block";
+                videosTabClickCount++;
+            } 
+        }
+        if(clickedLink.currentTarget.id === 'leaderboard-tab-link') {
+            const leaderboardTab = document.querySelector('#leaderboard-link');
+            setSectionActive(leaderboardTab);
+            loadMoreButton.style.display = "none";
+        }
+        if(clickedLink.currentTarget.id === 'challenges-tab-link') {
+            const challengesTab = document.querySelector('#challenges-link');
+            setSectionActive(challengesTab);
             loadMoreButton.style.display = "none";
         }
     })
@@ -662,7 +698,6 @@ navCheckboxLabel.addEventListener('click', ()=> {
         navHeader.classList.add('navbar-scrolled');
         headerSearchFormContainer.style.opacity = '1';
         pageBody.style.overflow = 'hidden';
-        console.log('checkbox checked');
     } else if(!navCheckbox.checked){
         pageBody.style.overflow = 'hidden';
     } else if(navCheckbox.checked && navHeader.classList.contains('navbar-scrolled') && window.pageYOffset < 50){
@@ -693,4 +728,10 @@ loadMoreButton.addEventListener('click', function(){
        
     }           
 })
-
+//alert user they are leaving clone site
+const leavingCloneSiteLinks = document.querySelectorAll('.leave-pexels');
+leavingCloneSiteLinks.forEach(link => {
+    link.addEventListener('click', ()=>{
+        alert('You are leaving the Pexels clone site and going to a real Pexels webpage');
+    })
+})

@@ -38,35 +38,42 @@
                         <a href="https://www.pexels.com/">Pexels.com</a>
                     </p>
                 </div>
-                <a href="#" class="nav-link _bold">Home</a>
+                <a href="#" class="nav-link _bold tabs-link">Home</a>
                 <hr>
-                <a href="#" class="nav-link _bold">Discover Photos</a>
-                <a href="https://www.pexels.com/popular-searches/" class="nav-link _bold">Popular Searches</a>
-                <a href="#" class="nav-link _bold">Free Videos</a>
-                <a href="#" class="nav-link _bold">Challenges</a>
-                <a href="#" class="nav-link _bold">Leaderboard</a>
-                <a href="#" class="nav-link _bold">Pexels Blog</a>
+                <div class="explore-nav-section nav-section-flex">
+                    <a id="trending-new-photos-link" href="#" class="nav-link _bold tabs-link">New & Trending Photos</a>
+                    <a id="discover-tab-link" href="#" class="nav-link _bold tabs-link">Discover Collections</a>
+                    <a id="video-tab-link" href="#" class="nav-link _bold tabs-link">Free Videos</a>
+                    <a id="leaderboard-tab-link" href="#" class="nav-link _bold tabs-link">Leaderboard</a>
+                    <a id="challenges-tab-link" href="#" class="nav-link _bold tabs-link">Challenges</a>
+                    <a href="https://www.pexels.com/blog/" class="nav-link _bold leave-pexels">Pexels Blog</a>
+                </div>
                 <hr>
-                <a href="#" class="nav-link">Login</a>
-                <a href="#" class="nav-link">Join</a>
-                <a href="#" class="nav-link">Change Language</a>
-                <a href="https://www.pexels.com/license/" class="nav-link _mediaQ-show">License</a>
+                <div class="three-dot-nav-section nav-section-flex">
+                    <a href="https://www.pexels.com/login/" class="nav-link leave-pexels">Login</a>
+                    <a href="https://www.pexels.com/onboarding/" class="nav-link leave-pexels">Join</a>
+                    <a href="https://www.pexels.com/" class="nav-link leave-pexels">Change Language</a>
+                </div>
+                <a href="https://www.pexels.com/license/" class="nav-link leave-pexels">License</a>
                 <hr>
-                <a href="#" class="nav-link">Apps And Ps Plugin</a>
-                <a href="#" class="nav-link">FAQ</a>
-                <a href="#" class="nav-link">About Us</a>
-                <a href="#" class="nav-link">Imprint & Terms</a>
+                <div class="three-dot-nav-section nav-section-flex">
+                    <a href="https://www.pexels.com/pro/" class="nav-link leave-pexels">Apps And Ps Plugin</a>
+                    <a href="https://pexels-help.zendesk.com/hc/en-us" class="nav-link leave-pexels">FAQ</a>
+                    <a href="https://www.pexels.com/about/" class="nav-link leave-pexels">About Us</a>
+                    <a href="https://www.pexels.com/imprint/" class="nav-link leave-pexels">Imprint & Terms</a>
+                </div>
                     
             </nav>
             <label class="nav-label" for="nav-menu-checkbox"><span class="nav-menu-hamburger"></span></label>
             
             <div class="desktop-sub-nav">
-                <a href="#" class="nav-link _mediaQ-show">Explore</a>
-                    <a href="https://www.pexels.com/join-contributor/" class="nav-link _mediaQ-show">Upload</a>
-                    <a href='#' class="nav-link">...</a>
-                    <button class="join-button">
-                        <a href="https://www.pexels.com/onboarding/" class="join-link">Join</a>
-                    </button>
+                <a href="#" class="nav-desktop-link">Explore</a>
+                <a href="https://www.pexels.com/license/" class="nav-desktop-link leave-pexels">License</a>
+                <a href="https://www.pexels.com/join-contributor/" class="nav-desktop-link leave-pexels">Upload</a>
+                <a href='#' class="nav-desktop-link">...</a>
+                <button class="join-button">
+                    <a href="https://www.pexels.com/onboarding/" class="join-link leave-pexels">Join</a>
+                </button>
             </div>
         </div>
     </header>
@@ -94,6 +101,7 @@
         </div>
     </section>
     <!-- TABS SECTION -->
+    <!-- <div id="tabs-bookmark" class="tabs-bookmark"></div> -->
     <div class="tabs-container">
         <a id="home-link" href="#" class="tabs-container__link _home js-active-tab">Home</a>
         <a id="discover-link" href="#" class="tabs-container__link _discover">Discover</a>
