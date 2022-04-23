@@ -14,7 +14,7 @@
             <div class='header-left-side'>
                 <a href="index.html" class="header-home-link">
                     <div class="header-logo-container">P</div>
-                    <p class="header-pexels-name">Pexxels</p>
+                    <p class="header-pexels-name">PexelsAPIClone</p>
                 </a>
             </div>
             <div  class="header-search-form-container">
@@ -32,13 +32,22 @@
             </div>
             <input class="nav-checkbox" type="checkbox" name="" id="nav-menu-checkbox">
             <nav class="nav-menu">
-                <div class="nav-menu-header">
+                <div class="desktop-sub-nav">
+                    <a href="" id="explore-link" class="nav-desktop-link">Explore</a>
+                    <a href="https://www.pexels.com/license/" class="nav-desktop-link leave-pexels">License</a>
+                    <a href="https://www.pexels.com/join-contributor/" class="nav-desktop-link leave-pexels">Upload</a>
+                    <a href='' id="three-dot-link" class="nav-desktop-link">...</a>
+                    <button class="join-button">
+                        <a href="https://www.pexels.com/onboarding/" class="join-link leave-pexels">Join</a>
+                    </button>
+                </div>
+                <div class="nav-menu-header desktop-hide">
                     <p>This is a pexels clone site</p>
                     <p>All photos & Videos from
                         <a href="https://www.pexels.com/">Pexels.com</a>
                     </p>
                 </div>
-                <a href="#" class="nav-link _bold tabs-link">Home</a>
+                <a href="#" class="nav-link _bold tabs-link desktop-hide">Home</a>
                 <hr>
                 <div class="explore-nav-section nav-section-flex">
                     <a id="trending-new-photos-link" href="#" class="nav-link _bold tabs-link">New & Trending Photos</a>
@@ -53,10 +62,8 @@
                     <a href="https://www.pexels.com/login/" class="nav-link leave-pexels">Login</a>
                     <a href="https://www.pexels.com/onboarding/" class="nav-link leave-pexels">Join</a>
                     <a href="https://www.pexels.com/" class="nav-link leave-pexels">Change Language</a>
-                </div>
-                <a href="https://www.pexels.com/license/" class="nav-link leave-pexels">License</a>
-                <hr>
-                <div class="three-dot-nav-section nav-section-flex">
+                    <a href="https://www.pexels.com/license/" class="nav-link leave-pexels desktop-hide">License</a>
+                    <hr>
                     <a href="https://www.pexels.com/pro/" class="nav-link leave-pexels">Apps And Ps Plugin</a>
                     <a href="https://pexels-help.zendesk.com/hc/en-us" class="nav-link leave-pexels">FAQ</a>
                     <a href="https://www.pexels.com/about/" class="nav-link leave-pexels">About Us</a>
@@ -66,15 +73,6 @@
             </nav>
             <label class="nav-label" for="nav-menu-checkbox"><span class="nav-menu-hamburger"></span></label>
             
-            <div class="desktop-sub-nav">
-                <a href="#" class="nav-desktop-link">Explore</a>
-                <a href="https://www.pexels.com/license/" class="nav-desktop-link leave-pexels">License</a>
-                <a href="https://www.pexels.com/join-contributor/" class="nav-desktop-link leave-pexels">Upload</a>
-                <a href='#' class="nav-desktop-link">...</a>
-                <button class="join-button">
-                    <a href="https://www.pexels.com/onboarding/" class="join-link leave-pexels">Join</a>
-                </button>
-            </div>
         </div>
     </header>
     <!-- HERO SECTION -->
@@ -112,10 +110,7 @@
     <div class="tabs-gallery-divider"></div>
     
     
-    <!-- MAIN MEDIA CONTENT -->
-    
-   
-    
+    <!-- MAIN MEDIA CONTENT --> 
     <section class="media-content-container">
         <div id="Home" class="content-container js-active-content">
             <div class="curated-gallery-header-container">
@@ -173,8 +168,6 @@
         <button id="load-more-button-for-tabs" class="load-more-button" >Load More</button>
 
         
-        <!-- <button data-open-modal-button="#modal" class="open-modal-button">open modal</button> -->
-
         <div class="modal-container" id="modal">
             <div class="modal-header-container">
                 <div class="modal-header"></div>

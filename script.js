@@ -95,8 +95,11 @@ function createMediaElementsAndAppend(data, columns, mediaType, tabOrModal){
             mediaContent.loading = 'lazy';
         }
         mediaContainer.classList.add('curated-photo-container');
+        mediaContainer.classList.add('leave-pexels');
         mediaLink.classList.add('curated-photo-link');
+        mediaLink.classList.add('leave-pexels');
         mediaContent.classList.add('curated-photo');
+        mediaContent.classList.add('leave-pexels');
 
         //how to load on columns based on screen width
         let columnHeightsArray = [];
@@ -280,30 +283,34 @@ function featuredCollectionsPexelsRequest (){
                     pexelsFeaturedURL = data.next_page;
 
                     data.collections.map(item => {
-
+                        console.log(item);
                          //UNABLE TO FETCH SPECIFIC COLLECTIONS BY ID DUE TO 401. API KEY IS CORRECT.
             //NOT SURE WHY, EMAILED PEXELS 3/22/22 ABOUT 401.
                         let featuredCollectionID = item.id; 
                         
 
-                    // fetch("https://api.pexels.com/v1/collections/" + featuredCollectionID + "?per_page=1",{
-                    //     headers: {
-                    //         Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223'
-                    //     }
-                    // })
-                    //     .then(collectionResponse => {
-                    //         return collectionResponse.json();
-                    //     })
-                    //     .then(collectionData => {
-                    //         console.log(collectionData);
-                    //     })
-
+                    fetch("https://api.pexels.com/v1/collections/" + featuredCollectionID + "?per_page=5",{
+                        headers: {
+                            Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223'
+                        }
+                    })
+                        .then(collectionResponse => {
+                            return collectionResponse.json();
+                        })
+                        .then(collectionData => {
+                            console.log(collectionData);
+                            // collectionData.id.map(item => {
+                            //     console.log(item);
+                            // })
+                            
+                        })
+                        //${collectionData.media[0].src.medium}
                         const featuredCollectionsContainer = document.querySelector('.featured-collections-container');
                     
                         featuredCollectionsContainer.insertAdjacentHTML('beforeend', 
                         `<div class="collection-container">
                             <div class="main-collection-image-container">
-                                <img src="images/search-icon-40.png" alt="" class="main-collection-image">
+                                <img src="" alt="" class="main-collection-image">
                             </div>
                             <div class="collection-thumbnails">
                                 <div class="thumbnail-container">
@@ -728,6 +735,38 @@ loadMoreButton.addEventListener('click', function(){
        
     }           
 })
+//desktop nav bar hover listeners
+const exploreDesktopNavLink = document.querySelector('#explore-link');
+const exploreDesktopNavMenu = document.querySelector('.explore-nav-section');
+const threeDotDesktopNavLink =document.querySelector('#three-dot-link');
+const threeDotDesktopNavMenu = document.querySelector('.three-dot-nav-section');
+//explore menu
+exploreDesktopNavLink.addEventListener('mouseover', ()=>{
+    exploreDesktopNavMenu.classList.add('transform-menu');
+})
+exploreDesktopNavMenu.addEventListener('mouseover', ()=>{
+    exploreDesktopNavMenu.classList.add('transform-menu');
+})
+exploreDesktopNavLink.addEventListener('mouseleave', ()=>{
+    exploreDesktopNavMenu.classList.remove('transform-menu');
+})
+exploreDesktopNavMenu.addEventListener('mouseleave', ()=>{
+    exploreDesktopNavMenu.classList.remove('transform-menu');
+})
+//three dot menu
+threeDotDesktopNavLink.addEventListener('mouseover', ()=>{
+    threeDotDesktopNavMenu.classList.add('transform-menu');
+})
+threeDotDesktopNavMenu.addEventListener('mouseover', ()=>{
+    threeDotDesktopNavMenu.classList.add('transform-menu');
+})
+threeDotDesktopNavLink.addEventListener('mouseleave', ()=>{
+    threeDotDesktopNavMenu.classList.remove('transform-menu');
+})
+threeDotDesktopNavMenu.addEventListener('mouseleave', ()=>{
+    threeDotDesktopNavMenu.classList.remove('transform-menu');
+})
+
 //alert user they are leaving clone site
 const leavingCloneSiteLinks = document.querySelectorAll('.leave-pexels');
 leavingCloneSiteLinks.forEach(link => {
