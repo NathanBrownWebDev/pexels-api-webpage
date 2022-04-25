@@ -62,7 +62,7 @@ function createMediaElementsAndAppend(data, columns, mediaType, tabOrModal){
     } else {
         dataArray = data.photos;
     }
-    dataArray.forEach(function(media){
+    dataArray.forEach(media =>{
         
         //photo elements/classes/properties
         let mediaContainer = document.createElement('div');;
@@ -265,135 +265,104 @@ curatedGallerySelector.addEventListener('change', () => {
 
 
 //DISCOVER TAB - COLLECTIONS FEATURE
+const featuredCollectionsContainer = document.querySelector('.featured-collections-container');
 let pexelsFeaturedURL = 'https://api.pexels.com/v1/collections/featured?page=1&per_page=12';
 
-function featuredCollectionsPexelsRequest (){
+function featuredCollectionsPexelsRequest (){  
+    let collectionLoadCounter = 0;                       
     fetch(pexelsFeaturedURL, {
-            headers: {
-                Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223'
-            }
+        headers: {
+            Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223'
+        }
+    })
+        .then(response => {
+            return response.json();
         })
-            .then(featuredCollectionsResponse => {
-                return featuredCollectionsResponse.json();
-            })
-            .then(data => {   
-                if(data.status == 404) {
-                    //
-                } else {                          
-                    pexelsFeaturedURL = data.next_page;
-
-                    data.collections.map(item => {
-                        console.log(item);
-                         //UNABLE TO FETCH SPECIFIC COLLECTIONS BY ID DUE TO 401. API KEY IS CORRECT.
-            //NOT SURE WHY, EMAILED PEXELS 3/22/22 ABOUT 401.
-                        let featuredCollectionID = item.id; 
+        .then(async data => {
+            pexelsFeaturedURL = data.next_page;
+            await Promise.all(data.collections.map((collection)=>{
+                return fetch("https://api.pexels.com/v1/collections/" + collection.id + "?per_page=5",{
+                    headers: {
+                        Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223'
+                    }
+                })
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(collectionData => {
+                        const featuredCollectionLink = document.createElement('a');
+                        featuredCollectionLink.classList.add('featured-collection-link');
+                        featuredCollectionLink.classList.add('leave-pexels');
+                        featuredCollectionLink.href = `https://www.pexels.com/collections/${collection.title}-${collection.id}/`;
+                        //https://www.pexels.com/collections/hello-spring-8xntbhr/
                         
+                        
+                        const collectionContainer = document.createElement('div');
+                        collectionContainer.classList.add('collection-container')
+                        
+                        //create & append main collection image
+                        const mainCollectionImageContainer = document.createElement('div');
+                        const mainCollectionImage = document.createElement('img');
+                        mainCollectionImageContainer.classList.add('main-collection-image-container');
+                        mainCollectionImage.classList.add('main-collection-image');
+                        let mainCollectionImageURL;
+                        (collectionData.media[0].type === 'Photo') ?  
+                            mainCollectionImageURL = collectionData.media[0].src.medium : 
+                            mainCollectionImageURL = collectionData.media[0].video_pictures[0].picture;
+                        mainCollectionImage.src = mainCollectionImageURL;
+                        mainCollectionImageContainer.appendChild(mainCollectionImage);
 
-                    fetch("https://api.pexels.com/v1/collections/" + featuredCollectionID + "?per_page=5",{
-                        headers: {
-                            Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223'
+                        const collectionTitleAndCountContainer = document.createElement('div');
+                        const collectionTitle = document.createElement('h3');
+                        const countContainer = document.createElement('div');
+                        const countIcon = document.createElement('img');
+                        const collectionMediaCount = document.createElement('p');
+                        collectionTitleAndCountContainer.classList.add('collection-title-and-count-container');
+                        countContainer.classList.add('count-container');
+                        countIcon.classList.add('count-icon');
+                        collectionMediaCount.classList.add('count');
+                        collectionMediaCount.insertAdjacentHTML('beforeend', collection.media_count);  //.createTextNode(collection.media_count);
+                        collectionTitle.insertAdjacentHTML("beforeend", collection.title); //createTextNode(collection.title);
+                        countIcon.src = 'images/media-icon.svg';
+                        countContainer.append(countIcon, collectionMediaCount);
+                        collectionTitleAndCountContainer.append(collectionTitle, countContainer);
+
+                        
+                        const collectionThumbnailsContainer = document.createElement('div');
+                        collectionThumbnailsContainer.classList.add('collection-thumbnails');
+
+
+                        //get and append thumbnail images from collectionData
+                        collectionData.media.shift(); //remove first collectionData item since it was used for main image
+                        collectionData.media.forEach(mediaItem => {
+                            const thumbNailContainer = document.createElement('div');
+                            const thumbNailImage = document.createElement('img');
+                            thumbNailContainer.classList.add('thumbnail-container');
+                            thumbNailImage.classList.add('collection-thumbnail');
+                            //conditional (ternary) operator (basically es6 if statement)
+                            (mediaItem.type === 'Photo') ?  
+                            thumbNailImage.src = mediaItem.src.small : 
+                            thumbNailImage.src = mediaItem.video_pictures[0].picture;
+
+                            thumbNailContainer.appendChild(thumbNailImage);
+                            collectionThumbnailsContainer.appendChild(thumbNailContainer);
+                        })
+                        collectionContainer.append(mainCollectionImageContainer, collectionThumbnailsContainer, collectionTitleAndCountContainer);
+                        featuredCollectionLink.appendChild(collectionContainer);
+                        featuredCollectionsContainer.appendChild(featuredCollectionLink);
+                        
+                        collectionLoadCounter++;
+            
+                        if (collectionLoadCounter === data.collections.length) {
+                            mainCollectionImage.addEventListener('load', () => {
+                                animationContainer.style.display = 'none';
+                            })
                         }
                     })
-                        .then(collectionResponse => {
-                            return collectionResponse.json();
-                        })
-                        .then(collectionData => {
-                            console.log(collectionData);
-                            // collectionData.id.map(item => {
-                            //     console.log(item);
-                            // })
-                            
-                        })
-                        //${collectionData.media[0].src.medium}
-                        const featuredCollectionsContainer = document.querySelector('.featured-collections-container');
-                    
-                        featuredCollectionsContainer.insertAdjacentHTML('beforeend', 
-                        `<div class="collection-container">
-                            <div class="main-collection-image-container">
-                                <img src="" alt="" class="main-collection-image">
-                            </div>
-                            <div class="collection-thumbnails">
-                                <div class="thumbnail-container">
-                                    <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
-                                </div>                    
-                                <div class="thumbnail-container">
-                                    <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
-                                </div>                    
-                                <div class="thumbnail-container">
-                                    <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
-                                </div>                    
-                                <div class="thumbnail-container">
-                                    <img src="images/search-icon-40.png" alt="" class="collection-thumbnail">
-                                </div>                    
-                            </div>
-                            <div class="collection-title-and-count-container">
-                                <h3>${item.title}</h3>
-                                <div class="count-container">
-                                    <p>icon</p> 
-                                    <p class="count">${item.media_count}</p>
-                                            
-                                </div>
-                            </div>
-                        </div>`);
+            }))
+        })
+}
 
-                        const mainCollectionImage = document.querySelector('.main-collection-image');
-                        mainCollectionImage.addEventListener('load', () => {
-                            animationContainer.style.display = 'none';
-                        })
-                    });
-
-            //UNABLE TO FETCH SPECIFIC COLLECTIONS BY ID DUE TO 401. API KEY IS CORRECT.
-            //NOT SURE WHY, EMAILED PEXELS 3/22/22 ABOUT 401.
-                    // fetch("https://api.pexels.com/v1/collections/" + "e3uq82x" + "?per_page=1",{
-                    //     headers: {
-                    //         Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223'
-                    //     }
-                    // })
-                    //     .then(response => {
-                    //         return response.json();
-                    //     })
-                    //     .then(data => { 
-                    //         console.log('2nd fetch worked');
-                    //             const featuredCollectionsContainer = document.querySelector('.featured-collections-container');
-                                
-                    //             console.log(data.media);
-                    //             data.media.forEach(imageOrVideo => {
-                                    
-                    //                 if(imageOrVideo.type === 'Photo'){
-                    //                     console.log('i am a photo');
-                    //                     const featuredImageContainer = document.createElement('div');
-                    //                     const featuredImage = document.createElement('img');
-                                        
-                    //                     featuredImageContainer.classList.add('featured-image-container');
-                    //                     featuredImage.classList.add('featured-image');
-
-                    //                     featuredImage.src = imageOrVideo.src.medium;
-                    //                     featuredImageContainer.appendChild(featuredImage);
-
-                    //                     featuredCollectionContainer.appendChild(featuredImageContainer);
-                                        
-                    //                 }
-                    //                 if(imageOrVideo.type === 'Video'){
-                    //                     console.log('i am a video');
-                    //                     const featuredVideoContainer = document.createElement('div');
-                    //                     const featuredVideo = document.createElement('video');
-                                        
-                    //                     featuredVideoContainer.classList.add('featured-image-container');
-                    //                     featuredVideo.classList.add('featured-image');
-
-                    //                     featuredVideo.src = imageOrVideo.src.medium;
-                    //                     featuredVideoContainer.appendChild(featuredImage);
-
-                    //                     featuredCollectionContainer.appendChild(featuredVideoContainer);
-                    //                 }
-                    //             });
-                            
-                    // })
-                }
-            })
-        }
-
-//featuredCollectionsPexelsRequest();
 
 //APPEND VIDEO SECTION
 const popularVideoColumns = document.querySelectorAll('.popular-video-column');
@@ -488,7 +457,7 @@ function appendSearchedVideoGallery(searchedURL){ //(searchURL, mediaType) - pro
             }
         })
     }
-//video tab listener
+//searched video tab listener
 searchedVideosTab.addEventListener('click', ()=> {
     searchedPhotosTab.classList.remove('active');
     searchedVideosTab.classList.add('active');
@@ -636,6 +605,7 @@ for (let tab of tabs) {
 for (let link of tabLinks){
     link.addEventListener('click', (clickedLink)=> {
         navCheckbox.checked = false;
+        pageBody.style.overflow = 'auto';
         //(clickedLink.currentTarget.id === 'trending-new-photos-link') ? console.log(clickedLink.currentTarget.id) : console.log('nope');
         if(clickedLink.currentTarget.id === 'trending-new-photos-link') {
             const homeTab = document.querySelector('#home-link');

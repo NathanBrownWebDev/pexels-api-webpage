@@ -18,7 +18,10 @@ div {
 h1 {
     font-size: 35px;
 }
-
+h3 {
+    font-size: 1.2rem;
+    color: #000000;
+}
 button {
     border: none;
 }
@@ -332,7 +335,9 @@ svg:hover {
     color: rgb(37, 125, 240);
     border-bottom: solid .25em rgb(37, 125, 240);
 }
-
+/* .media-content-container{
+    overflow-x: auto;
+} */
 .curated-gallery-header-container {
     display: flex;
     flex-wrap: nowrap;
@@ -614,35 +619,32 @@ svg:hover {
         color: #ffffff;
     }
 }
-@media only screen and (min-width: 1200px) {
-    .curated-photo-column._four, 
-    .modal-photos-column._four,
-    .modal-videos-column._four, 
-    .popular-video-column._four{
-        display: flex;
-    }
-    .artist-name{
-        /* white-space: nowrap; */
-        font-size: .8rem;
-    }
-}
+
 
 .featured-collections-container{
     margin: 4em auto 0 auto;
     padding: 0 1em;
     width: 100%;
-    min-width: 50em;
-    max-width: 76em;
+    overflow-x:auto;
+    max-width: 850px;
     height: auto;
     display: grid;
-    gap: 1.5em;
+    gap: 1.5em 0.05em;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: auto;
+  
 }
-.collection-container {
+.featured-collection-link{
+    width: 270px;
+    height: 100%;
+}
+/* .content-container._discover {
     
+    margin: 0 auto;
+} */
+.collection-container {
     width: 100%;
-    height: 375px;
+    min-height: 150px;
     padding: .5em;
     border-radius: .75em;
 }
@@ -654,21 +656,19 @@ svg:hover {
 }
 .main-collection-image-container {
     width: 100%;
-    height: 70%;
+    height: 170px;
     object-fit: cover;
     border-radius: .5em;
     overflow:hidden;
-    margin-bottom: .5em;
-    background-color: pink;
-
+    margin-bottom: .2em;
 }
 .main-collection-image {
     min-width: 100%;
     min-height: 100%;
+    object-fit: cover;
 }
 .collection-thumbnails{
     width: 100%;
-    height: 20%;
     border-radius: .5em;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -677,18 +677,16 @@ svg:hover {
 }
 .thumbnail-container {
     width: 100%;
-    height: 100%;
+    height: 48px;
 }
 .collection-thumbnail {
     height: 100%;
     width: 100%;
-    
     object-fit: cover;
-
 }
 .collection-title-and-count-container{
     width: 100;
-    height: 10%;
+    margin-top: .4em;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -697,9 +695,15 @@ svg:hover {
 .count-container{
     display: flex;
     flex-wrap:nowrap;
+    align-items: center;
 }
 .count{
-    color: rgb(129, 129, 129);
+    color: rgb(104, 104, 104);
+    margin-left: .2em;
+}
+.count-icon{
+    width: 15px;
+    height: 15px;
 }
 .leaderboard-container, .challenges-container {
     margin: 5em auto;
@@ -879,4 +883,31 @@ svg:hover {
 }
 .developer-link:hover {
     color: #686868;
+}
+@media only screen and (min-width: 1200px) {
+    .curated-photo-column._four, 
+    .modal-photos-column._four,
+    .modal-videos-column._four, 
+    .popular-video-column._four{
+        display: flex;
+    }
+    .artist-name{
+        /* white-space: nowrap; */
+        font-size: .8rem;
+    }
+    .featured-collections-container{
+        max-width: 1250px;
+    }
+    .featured-collection-link{
+        width: 396px;
+    }
+    .collection-container {
+        height: 375px;
+    }
+    .main-collection-image-container{
+        height: 250px;
+    }
+    .thumbnail-container{
+        height: 70px;
+    }
 }
