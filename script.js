@@ -744,3 +744,5 @@ leavingCloneSiteLinks.forEach(link => {
         alert('You are leaving the Pexels clone site and going to a real Pexels webpage');
     })
 })
+//loop through every a tag, see if it contains the class 'leave-pexels' 
+//then add event listener, maybe this will fix photos, collection, etc links for the alert
