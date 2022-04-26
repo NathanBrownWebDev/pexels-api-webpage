@@ -95,11 +95,9 @@ function createMediaElementsAndAppend(data, columns, mediaType, tabOrModal){
             mediaContent.loading = 'lazy';
         }
         mediaContainer.classList.add('curated-photo-container');
-        mediaContainer.classList.add('leave-pexels');
         mediaLink.classList.add('curated-photo-link');
-        mediaLink.classList.add('leave-pexels');
         mediaContent.classList.add('curated-photo');
-        mediaContent.classList.add('leave-pexels');
+        
 
         //how to load on columns based on screen width
         let columnHeightsArray = [];
@@ -171,7 +169,12 @@ function createMediaElementsAndAppend(data, columns, mediaType, tabOrModal){
         //find/set height of image using original image size & ratio
         const imageHeight = media.height/(media.width/mediaContent.offsetWidth);
         mediaContent.style.height = `${imageHeight}px`;
+        //counter + 1
         lastPhotoLoadCounter++;
+        //add listener to every link to alert if leaving clone site
+        mediaLink.addEventListener('click', ()=>{
+            alert('You are leaving the Pexels clone site and going to a real Pexels webpage');
+        })
         //remove loading animation once last media is loaded
         if(lastPhotoLoadCounter === dataArray.length) {
             if(mediaType === 'videoMedia'){
@@ -292,9 +295,8 @@ function featuredCollectionsPexelsRequest (){
                     .then(collectionData => {
                         const featuredCollectionLink = document.createElement('a');
                         featuredCollectionLink.classList.add('featured-collection-link');
-                        featuredCollectionLink.classList.add('leave-pexels');
                         featuredCollectionLink.href = `https://www.pexels.com/collections/${collection.title}-${collection.id}/`;
-                        //https://www.pexels.com/collections/hello-spring-8xntbhr/
+                       
                         
                         
                         const collectionContainer = document.createElement('div');
@@ -358,6 +360,10 @@ function featuredCollectionsPexelsRequest (){
                                 animationContainer.style.display = 'none';
                             })
                         }
+                        //event listener to alert if user leaving clone
+                        featuredCollectionLink.addEventListener('click', ()=>{
+                            alert('You are leaving the Pexels clone site and going to a real Pexels webpage');
+                        })
                     })
             }))
         })
