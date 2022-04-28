@@ -1,3 +1,4 @@
+//hero background photo and artist title
 const heroBackgroundContainer = document.querySelector('.hero-background-container');
 const heroImage = document.querySelector('.hero-image');
 const heroPhotoArtistLinkContainer = document.querySelector('.hero-photo-artist-link-container');
@@ -5,7 +6,7 @@ const heroPhotoArtistLinkContainer = document.querySelector('.hero-photo-artist-
 function appendHeroBackgroundPhoto(imageData){
     heroImage.alt = imageData.alt;
 
-    if (window.screen.width <= 350){
+    if (window.screen.width <= 400){
         heroImage.src = imageData.src.medium;
     } else if (window.screen.width <= 940){
         heroImage.src = imageData.src.large;
@@ -36,15 +37,19 @@ function getHeroBackgroundPhoto (){
         }
     })
     .then(response => {
-        return response.json();
+        if(response.ok){
+            return response.json();
+        } else {
+            getHeroBackgroundPhoto();
+            throw new Error('Failed to fetch for getHeroBackgroundPhoto, photo ID is not a valid photo.');
+        }
     })
     .then(data => {   
-        if(data.status === 404) {
-            getHeroBackgroundPhoto();
-        } else {
             appendHeroBackgroundPhoto(data);
             appendHeroArtistLink(data);
-        }
+    })
+    .catch(error => {
+        console.log(error);
     })
 }
 getHeroBackgroundPhoto();
@@ -215,16 +220,24 @@ function appendCuratedGallery(){
             Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223',
         }
     })
-    .then(response => {
-        return response.json();
-    })
-            .then(data => {   
-                    pexelsCuratedPhotosURL = data.next_page;
-                    const mediaType = 'photoMedia';
-                    const tabOrModal = 'tab';
-                    createMediaElementsAndAppend(data, curatedPhotoColumns, mediaType, tabOrModal);
-            })
-        }
+        .then(response => {
+            if(response.ok){
+                return response.json();
+            } else {
+                appendCuratedGallery();
+                throw new Error('Fetch failed for appendCuratedGallery');
+            }
+        })
+        .then(data => {   
+                pexelsCuratedPhotosURL = data.next_page;
+                const mediaType = 'photoMedia';
+                const tabOrModal = 'tab';
+                createMediaElementsAndAppend(data, curatedPhotoColumns, mediaType, tabOrModal);
+        })
+        .catch(error => {
+            console.log(error);
+        })
+}
 appendCuratedGallery();
 
 
@@ -237,6 +250,7 @@ curatedGallerySelector.addEventListener('change', () => {
         }
         pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=10&per_page=12";
         appendCuratedGallery();
+        curatedGallerySelector.blur();
     }
     if(curatedGallerySelector.value === 'trending') {
         for (let column of curatedPhotoColumns) {
@@ -244,6 +258,7 @@ curatedGallerySelector.addEventListener('change', () => {
         }
         pexelsCuratedPhotosURL = "https://api.pexels.com/v1/curated?page=1&per_page=12";
         appendCuratedGallery();
+        curatedGallerySelector.blur();
     }
 })
 
@@ -266,7 +281,6 @@ curatedGallerySelector.addEventListener('change', () => {
 //     }
 // }
 
-
 //DISCOVER TAB - COLLECTIONS FEATURE
 const featuredCollectionsContainer = document.querySelector('.featured-collections-container');
 let pexelsFeaturedURL = 'https://api.pexels.com/v1/collections/featured?page=1&per_page=12';
@@ -283,7 +297,7 @@ function featuredCollectionsPexelsRequest (){
         })
         .then(async data => {
             pexelsFeaturedURL = data.next_page;
-            await Promise.all(data.collections.map((collection)=>{
+            await Promise.all(data.collections.map((collection)=>{ //'await' used so both fetches run parallel with each other (so data order doesn't get mixed up)
                 return fetch("https://api.pexels.com/v1/collections/" + collection.id + "?per_page=5",{
                     headers: {
                         Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223'
@@ -307,6 +321,7 @@ function featuredCollectionsPexelsRequest (){
                         const mainCollectionImage = document.createElement('img');
                         mainCollectionImageContainer.classList.add('main-collection-image-container');
                         mainCollectionImage.classList.add('main-collection-image');
+                        mainCollectionImage.loading = 'lazy';
                         let mainCollectionImageURL;
                         (collectionData.media[0].type === 'Photo') ?  
                             mainCollectionImageURL = collectionData.media[0].src.medium : 
@@ -341,6 +356,8 @@ function featuredCollectionsPexelsRequest (){
                             const thumbNailImage = document.createElement('img');
                             thumbNailContainer.classList.add('thumbnail-container');
                             thumbNailImage.classList.add('collection-thumbnail');
+                            thumbNailImage.loading = 'lazy';
+
                             //conditional (ternary) operator (basically es6 if statement)
                             (mediaItem.type === 'Photo') ?  
                             thumbNailImage.src = mediaItem.src.small : 
@@ -354,7 +371,8 @@ function featuredCollectionsPexelsRequest (){
                         featuredCollectionsContainer.appendChild(featuredCollectionLink);
                         
                         collectionLoadCounter++;
-            
+                        
+                        //load animation listener
                         if (collectionLoadCounter === data.collections.length) {
                             mainCollectionImage.addEventListener('load', () => {
                                 animationContainer.style.display = 'none';
@@ -380,15 +398,23 @@ function appendPopularVideosGallery(){
             Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223',
         }
     })
-            .then(response => {
+        .then(response => {
+            if(response.ok){
                 return response.json();
-            })
-            .then(videoObjects => { 
-                pexelsPopularVideosURL = videoObjects.next_page;
-                const mediaType = 'videoMedia';
-                const tabOrModal = 'tab';
-                createMediaElementsAndAppend(videoObjects, popularVideoColumns, mediaType, tabOrModal);
-            })
+            } else {
+                appendPopularVideosGallery();
+                throw new Error('Fetch Failed for appendPopularVideosGallery')
+            }
+        })
+        .then(videoObjects => { 
+            pexelsPopularVideosURL = videoObjects.next_page;
+            const mediaType = 'videoMedia';
+            const tabOrModal = 'tab';
+            createMediaElementsAndAppend(videoObjects, popularVideoColumns, mediaType, tabOrModal);
+        })
+        .catch(error => {
+            console.log(error);
+        })
 }
 
 //APPEND SEARCH GALLERY
@@ -411,42 +437,49 @@ function appendSearchedPhotoGallery(searchedURL){
             Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223',
         }
     })
-    .then(response => {
-        return response.json();
-    })
-    .then(data => {   
-        if(data.status === 404) {
-            
-        } else {
-            searchedPhotosURL = data.next_page;
-            const mediaType = 'photoMedia';
-            const tabOrModal = 'modal';
-            const searchedPhotoTabNumber = document.querySelector('#searched-photos__number');
-            const photoTotalSearchResults = document.createTextNode(data.total_results);
-            searchedPhotoTabNumber.replaceChildren();
-            searchedPhotoTabNumber.appendChild(photoTotalSearchResults);
-            searchedPhotosTab.addEventListener('click', ()=> {
-                searchedVideosTab.classList.remove('active');
-                searchedPhotosTab.classList.add('active');
-                modalVideosContainer.classList.remove('active');
-                        modalPhotosContainer.classList.add('active');
-            })
-            createMediaElementsAndAppend(data, modalPhotoColumns, mediaType, tabOrModal);              
-        }
-    })
+        .then(response => {
+            if(response.ok){
+                return response.json();
+            } else {
+                throw new Error('Failed fetch for appendSearchedPhotoGallery')
+            }
+        })
+        .then(data => {   
+                searchedPhotosURL = data.next_page;
+                const mediaType = 'photoMedia';
+                const tabOrModal = 'modal';
+                const searchedPhotoTabNumber = document.querySelector('#searched-photos__number');
+                const photoTotalSearchResults = document.createTextNode(data.total_results);
+                searchedPhotoTabNumber.replaceChildren();
+                searchedPhotoTabNumber.appendChild(photoTotalSearchResults);
+                searchedPhotosTab.addEventListener('click', ()=> {
+                    searchedVideosTab.classList.remove('active');
+                    searchedPhotosTab.classList.add('active');
+                    modalVideosContainer.classList.remove('active');
+                            modalPhotosContainer.classList.add('active');
+                })
+                createMediaElementsAndAppend(data, modalPhotoColumns, mediaType, tabOrModal);              
+        })
+        .catch(error => {
+            console.log(error);
+        })
 }
 
 //append searched videos function
 let searchedVideosURL;
 let searchedVideoTabClickCounter;
-function appendSearchedVideoGallery(searchedURL){ //(searchURL, mediaType) - properties to use once organizing photos and videos
+function appendSearchedVideoGallery(searchedURL){
     fetch(searchedURL, {
         headers: {
             Authorization: '563492ad6f91700001000001fc9be9012a224bfab10e2cf3995cc223',
         }
     })
         .then(response => {
+            if(response.ok){
                 return response.json();
+            } else {
+                throw new Error('Failed fetch for appendSearchedVideoGallery')
+            }
         })
         .then(data => {   
             searchedVideosURL = data.next_page;
@@ -462,6 +495,9 @@ function appendSearchedVideoGallery(searchedURL){ //(searchURL, mediaType) - pro
                 createMediaElementsAndAppend(data, modalVideoColumns, mediaType, tabOrModal);              
             }
         })
+        .catch(error => {
+            console.log(error);
+        })
     }
 //searched video tab listener
 searchedVideosTab.addEventListener('click', ()=> {
@@ -475,7 +511,7 @@ searchedVideosTab.addEventListener('click', ()=> {
     searchedVideoTabClickCounter++;
 })
 
-//modal open/close functions
+//modal open functions
 function openModal(modal){
     if (modal === null) return;
     modal.classList.add('active');
@@ -483,6 +519,7 @@ function openModal(modal){
     pageBody.style.overflow = 'hidden';
     document.activeElement.blur(); //to hide mobile keyboards after submitting a search
 }
+//modal close function
 function closeModal(modal){
     if (modal === null) return;
     modal.classList.remove('active');
@@ -612,7 +649,6 @@ for (let link of tabLinks){
     link.addEventListener('click', (clickedLink)=> {
         navCheckbox.checked = false;
         pageBody.style.overflow = 'auto';
-        //(clickedLink.currentTarget.id === 'trending-new-photos-link') ? console.log(clickedLink.currentTarget.id) : console.log('nope');
         if(clickedLink.currentTarget.id === 'trending-new-photos-link') {
             const homeTab = document.querySelector('#home-link');
             setSectionActive(homeTab);
@@ -750,5 +786,3 @@ leavingCloneSiteLinks.forEach(link => {
         alert('You are leaving the Pexels clone site and going to a real Pexels webpage');
     })
 })
-//loop through every a tag, see if it contains the class 'leave-pexels' 
-//then add event listener, maybe this will fix photos, collection, etc links for the alert
